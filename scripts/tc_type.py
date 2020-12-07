@@ -44,3 +44,6 @@ for m,n in zip(models,model_names):
     create_figure(df_model,n)
 
 
+import pickle
+with open('cm038_ft_pred_perc.pkl','rb') as f:
+    x1,x2,x3 = pickle.load(f)

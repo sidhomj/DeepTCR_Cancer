@@ -6,7 +6,7 @@ import pandas as pd
 from lifelines import KaplanMeierFitter
 from lifelines.statistics import logrank_test
 
-df = pd.read_csv('CM038_BM.csv')
+df = pd.read_csv('CM038_BM2.csv')
 
 kmf = KaplanMeierFitter()
 idx = df['DeepTCR'] >= np.median(df['DeepTCR'])

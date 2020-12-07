@@ -49,7 +49,7 @@ def resampling_distribution(fn, d, method='bootstrap', n=1000, prop=0.5, rand_se
     return estimates
 
 
-d = pd.read_csv('CM038_BM.csv')
+d = pd.read_csv('CM038_BM2.csv')
 d['log2_TTC'] = np.log2(d['TCR_Reads'])
 d['log2_TMB'] = np.log2(d['TMB'])
 d['Response'] = d['Response_cat']
@@ -110,3 +110,4 @@ plt.subplots_adjust(top = 0.95, bottom=0.1, hspace=0.25,wspace=0.35)
 plt.show()
 np.quantile(coef, [0.025, 0.5, 0.975], axis=0)
 np.mean(coef > 0, axis=0)
+check=1

@@ -42,8 +42,3 @@ model_names = ['TCR','HLA','TCR+HLA']
 for m,n in zip(models,model_names):
     df_model = pd.read_csv(m)
     create_figure(df_model,n)
-
-
-import pickle
-with open('cm038_ft_pred_perc.pkl','rb') as f:
-    x1,x2,x3 = pickle.load(f)

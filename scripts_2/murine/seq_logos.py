@@ -6,7 +6,7 @@ import pandas as pd
 
 DTCR_WF = DeepTCR_WF('Rudqvist_WF',device=0)
 df_preds = pd.read_csv('preds.csv')
-class_sel = '9H10'
+class_sel = 'RT'
 df_preds.sort_values(by=class_sel,inplace=True,ascending=False)
 
 beta_sequences = np.array(df_preds['beta_sequences'])[0:10]

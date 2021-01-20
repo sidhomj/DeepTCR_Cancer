@@ -6,7 +6,7 @@ import pandas as pd
 from lifelines import KaplanMeierFitter
 from lifelines.statistics import logrank_test
 
-df = pd.read_csv('CM038_BM2.csv')
+df = pd.read_csv('CM038_BM.csv')
 
 kmf = KaplanMeierFitter()
 idx = df['DeepTCR'] >= np.median(df['DeepTCR'])
@@ -24,8 +24,8 @@ plt.ylabel('Progression Free Survival (PFS)',fontdict={'size':14})
 r = logrank_test(t[idx], t[~idx], 1 - c[idx], 1 - c[~idx])
 plt.text(16,0.05,"p = " + str(np.round(r.p_value,3)),fontdict={'family':'arial','size':24})
 handles, labels = ax.get_legend_handles_labels()
-handles = [handles[0],handles[2]]
-labels = [labels[0],labels[2]]
+handles = [handles[0],handles[1]]
+labels = [labels[0],labels[1]]
 leg = ax.legend(handles, labels,title='Likelihood of Response',frameon=False,fontsize=12,markerscale=4)
 leg.get_title().set_fontsize('12')
 leg._legend_box.align = "left"

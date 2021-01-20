@@ -32,7 +32,7 @@ def create_figure(df_model,model_name):
     plt.title(model_name)
     plt.show()
 
-df = pd.read_csv('CM038_BM.csv')
+df = pd.read_csv('CM038_BM2.csv')
 combo = np.array(df['sample'][df['Tx'].str.contains('IPI')])
 mono = np.array(df['sample'][~df['Tx'].str.contains('IPI')])
 

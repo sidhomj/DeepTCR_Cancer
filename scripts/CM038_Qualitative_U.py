@@ -48,21 +48,21 @@ df_plot['pred'] = predicted[:,0]
 df_plot['gt'] = DTCR.class_id
 df_plot['freq'] = DTCR.freq
 
-plt.figure()
-ax = sns.distplot(df_plot['pred'],1000,color='k',kde=False)
-N,bins= np.histogram(df_plot['pred'],1000)
-for p,b in zip(ax.patches,bins):
-    if b < cut_bottom:
-        p.set_facecolor('r')
-    elif b > cut_top:
-        p.set_facecolor('b')
-y_min,y_max = plt.ylim()
-plt.xlim([0,1])
-plt.xticks(np.arange(0.0,1.1,0.1))
-plt.yticks([])
-plt.xlabel('')
-plt.ylabel('')
-plt.show()
+# plt.figure()
+# ax = sns.distplot(df_plot['pred'],1000,color='k',kde=False)
+# N,bins= np.histogram(df_plot['pred'],1000)
+# for p,b in zip(ax.patches,bins):
+#     if b < cut_bottom:
+#         p.set_facecolor('r')
+#     elif b > cut_top:
+#         p.set_facecolor('b')
+# y_min,y_max = plt.ylim()
+# plt.xlim([0,1])
+# plt.xticks(np.arange(0.0,1.1,0.1))
+# plt.yticks([])
+# plt.xlabel('')
+# plt.ylabel('')
+# plt.show()
 
 beta_sequences = DTCR.beta_sequences
 v_beta = DTCR.v_beta
@@ -76,7 +76,7 @@ featurize = True
 if featurize:
     DTCR_U = DeepTCR_U('test_hum', device=1)
     DTCR_U.Load_Data(beta_sequences=beta_sequences, v_beta=v_beta, d_beta=d_beta, j_beta=j_beta, hla=hla)
-    DTCR_U.Train_VAE(Load_Prev_Data=False, latent_dim=64,stop_criterion=0.001,accuracy_min=0.99)
+    DTCR_U.Train_VAE(Load_Prev_Data=False, latent_dim=128,stop_criterion=0.001,accuracy_min=0.98)
     X_2 = umap.UMAP().fit_transform(DTCR_U.features)
     with open(file, 'wb') as f:
         pickle.dump(X_2, f, protocol=4)
@@ -134,7 +134,7 @@ d['file'] = d['sample']
 d['sample'] = d['sample'].str.replace('_TCRB.tsv', '')
 d['counts'] = d.groupby('sample')['freq'].transform(lambda x: x / x.min())
 
-s = pd.read_csv('CM038_BM.csv')
+s = pd.read_csv('CM038_BM2.csv')
 s.rename(columns={'DeepTCR': 'preds'}, inplace=True)
 s = s.sort_values('preds')
 c_dict = dict(crpr='blue', sdpd='red')

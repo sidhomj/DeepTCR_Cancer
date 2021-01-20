@@ -3,7 +3,8 @@
 from DeepTCR.DeepTCR import DeepTCR_WF
 import numpy as np
 import os
-gpu = 2
+
+gpu = 3
 os.environ["CUDA DEVICE ORDER"] = 'PCI_BUS_ID'
 os.environ["CUDA_VISIBLE_DEVICES"] = str(gpu)
 

@@ -4,11 +4,11 @@ from DeepTCR.DeepTCR import DeepTCR_WF
 import numpy as np
 import pickle
 import os
-gpu = 1
+gpu = 5
 os.environ["CUDA DEVICE ORDER"] = 'PCI_BUS_ID'
 os.environ["CUDA_VISIBLE_DEVICES"] = str(gpu)
 
-DTCR = DeepTCR_WF('HLA_TCR_l2')
+DTCR = DeepTCR_WF('HLA_TCR')
 DTCR.Get_Data(directory='../Data',Load_Prev_Data=False,
                aa_column_beta=1,count_column=2,v_beta_column=7,d_beta_column=14,j_beta_column=21,data_cut=1.0,
               hla='../Data/HLA_Ref_sup_AB.csv')

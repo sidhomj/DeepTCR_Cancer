@@ -4,29 +4,6 @@ import numpy as np
 from matplotlib import pyplot as plt
 import pandas as pd
 import umap
-
-df_preds = pd.read_csv('preds.csv')
-
-DTCR = DeepTCR_U('Rudqvist_U',device=0)
-DTCR.Get_Data(directory='../../Rudqvist',Load_Prev_Data=False,
-               aa_column_beta=1,count_column=2,v_beta_column=7,d_beta_column=14,j_beta_column=21)
-DTCR.Train_VAE(accuracy_min=0.98,Load_Prev_Data=True)
-X_2 = umap.UMAP().fit_transform(DTCR.features)
-df_x2 = pd.DataFrame(X_2)
-df_x2.columns = ['x','y']
-df_preds = pd.concat([df_preds,df_x2],axis=1)
-
-fig,ax = plt.subplots(2,2,figsize=(10,10))
-ax = np.ndarray.flatten(ax)
-for ii,cl in enumerate(DTCR.lb.classes_,0):
-    c = np.array(df_preds[cl])
-    s = np.array(df_preds['freq'])
-    idx = np.argsort(c)
-    ax[ii].scatter(X_2[idx,0],X_2[idx,1],c=c[idx],cmap='jet',s=s[idx]*1000)
-    ax[ii].set_xticks([])
-    ax[ii].set_yticks([])
-    ax[ii].set_title(cl)
-
 from scipy.stats import gaussian_kde
 def GKDE(x,y,z=None):
     xy = np.vstack([x, y])
@@ -36,7 +13,28 @@ def GKDE(x,y,z=None):
     x ,y, z = x[r], y[r], z[r]
     return x,y,z,kernel,r
 
+
+DTCR = DeepTCR_U('Rudqvist_U',device=0)
+DTCR.Get_Data(directory='../../Rudqvist',Load_Prev_Data=False,
+               aa_column_beta=1,count_column=2,v_beta_column=7,d_beta_column=14,j_beta_column=21)
+DTCR.Train_VAE(accuracy_min=0.98,Load_Prev_Data=True)
+X_2 = umap.UMAP().fit_transform(DTCR.features)
+df_x2 = pd.DataFrame(X_2)
+df_x2.columns = ['x','y']
+df_preds = pd.read_csv('preds.csv')
+df_preds = pd.concat([df_preds,df_x2],axis=1)
+
 classes = ['Control','RT','9H10','Combo']
+win = 10
+DFs = []
+for cl in classes:
+    cut_top = np.percentile(df_preds[cl],100-win)
+    df_top = df_preds[df_preds[cl] > cut_top]
+    DFs.append(df_top)
+
+df_preds = pd.concat(DFs)
+df_preds.drop_duplicates(inplace=True)
+
 plt.scatter(X_2[:,0],X_2[:,1])
 xlim = plt.xlim()
 ylim = plt.ylim()
@@ -62,6 +60,17 @@ for ii,cl in enumerate(classes,0):
         if jj == 0:
             ax[ii,jj].set_ylabel(cl,fontsize=18)
 plt.tight_layout()
+
+# fig,ax = plt.subplots(2,2,figsize=(10,10))
+# ax = np.ndarray.flatten(ax)
+# for ii,cl in enumerate(DTCR.lb.classes_,0):
+#     c = np.array(df_preds[cl])
+#     s = np.array(df_preds['freq'])
+#     idx = np.argsort(c)
+#     ax[ii].scatter(X_2[idx,0],X_2[idx,1],c=c[idx],cmap='jet',s=s[idx]*1000)
+#     ax[ii].set_xticks([])
+#     ax[ii].set_yticks([])
+#     ax[ii].set_title(cl)
 
 
 

@@ -10,14 +10,44 @@ df_preds = pd.read_csv('preds.csv')
 DTCR = DeepTCR_U('Rudqvist_U',device=0)
 DTCR.Get_Data(directory='../../Rudqvist',Load_Prev_Data=False,
                aa_column_beta=1,count_column=2,v_beta_column=7,d_beta_column=14,j_beta_column=21)
-DTCR.Train_VAE(accuracy_min=0.98)
+DTCR.Train_VAE(accuracy_min=0.98,Load_Prev_Data=True)
 X_2 = umap.UMAP().fit_transform(DTCR.features)
+df_x2 = pd.DataFrame(X_2)
+df_x2.columns = ['x','y']
+df_preds = pd.concat([df_preds,df_x2],axis=1)
 
 fig,ax = plt.subplots(2,2,figsize=(10,10))
 ax = np.ndarray.flatten(ax)
 for ii,cl in enumerate(DTCR.lb.classes_,0):
-    ax[ii].scatter(X_2[:,0],X_2[:,1],c=np.array(df_preds[cl]),cmap='jet')
+    c = np.array(df_preds[cl])
+    s = np.array(df_preds['freq'])
+    idx = np.argsort(c)
+    ax[ii].scatter(X_2[idx,0],X_2[idx,1],c=c[idx],cmap='jet',s=s[idx]*1000)
     ax[ii].set_xticks([])
     ax[ii].set_yticks([])
     ax[ii].set_title(cl)
+
+plt.scatter(X_2[:,0],X_2[:,1])
+xlim = plt.xlim()
+ylim = plt.ylim()
+plt.close()
+fig,ax = plt.subplots(4,5,figsize=(10,10))
+for ii,cl in enumerate(DTCR.lb.classes_,0):
+    df_class = df_preds[df_preds['label']==cl]
+    for jj,s in enumerate(np.unique(df_class['sample']),0):
+        df_sample = df_class[df_class['sample']==s]
+        c = np.array(df_sample[cl])
+        s = np.array(df_sample['freq'])
+        idx = np.argsort(c)
+        x,y = np.array(df_sample['x']),np.array(df_sample['y'])
+        ax[ii,jj].scatter(x[idx], y[idx], c=c[idx], cmap='jet', s=s[idx] * 1000)
+        ax[ii,jj].set_xticks([])
+        ax[ii,jj].set_yticks([])
+        ax[ii,jj].set_xlim(xlim)
+        ax[ii,jj].set_ylim(ylim)
+        if jj == 0:
+            ax[ii,jj].set_ylabel(cl)
+plt.tight_layout()
+
+
 

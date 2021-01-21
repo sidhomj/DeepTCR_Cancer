@@ -16,6 +16,10 @@ df_tcr = pd.read_csv('sample_tcr.csv')
 df_hla = pd.read_csv('sample_hla.csv')
 df_tcr_hla = pd.read_csv('sample_tcr_hla.csv')
 
+df_tcr = pd.read_csv('sample_tcr_inf.csv')
+df_hla = pd.read_csv('sample_hla_inf.csv')
+df_tcr_hla = pd.read_csv('sample_tcr_hla_inf.csv')
+
 #Concat Data
 df = pd.DataFrame()
 df['Samples'] = df_tcr['Samples']
@@ -53,7 +57,7 @@ for m in models:
     fpr, tpr, th = roc_curve(df['Label'], df[m])
     class_name = m
     ax1.plot(fpr, tpr, lw=2, label='%s (%0.2f)' % (class_name, roc_score))
-ax1.legend(loc='upper left',frameon=False)
+ax1.legend(loc='lower left',frameon=False)
 
 ax2 = f.add_axes([0.48, .2, .4, .4])
 ax2.spines['right'].set_visible(False)

@@ -14,7 +14,7 @@ import numpy as np
 #Load Data
 df_tcr = pd.read_csv('sample_tcr.csv')
 df_hla = pd.read_csv('sample_hla.csv')
-df_tcr_hla = pd.read_csv('sample_tcr_hla.csv')
+df_tcr_hla = pd.read_csv('sample_tcr_hla_inf.csv')
 
 #Concat Data
 df = pd.DataFrame()

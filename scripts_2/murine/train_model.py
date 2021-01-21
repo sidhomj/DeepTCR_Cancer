@@ -7,6 +7,7 @@ from DeepTCR.DeepTCR import DeepTCR_SS, DeepTCR_WF
 from sklearn.metrics import roc_curve, roc_auc_score
 import numpy as np
 from matplotlib import pyplot as plt
+import pickle
 
 #Train Repertoire Classifier
 folds = 100
@@ -26,6 +27,8 @@ DTCR_WF.Get_Data(directory='../../Rudqvist',Load_Prev_Data=False,
 DTCR_WF.Monte_Carlo_CrossVal(folds=folds,LOO=LOO,epochs_min=epochs_min,num_concepts=num_concepts,size_of_net=size_of_net,
                              train_loss_min=train_loss_min,hinge_loss_t=hinge_loss_t,combine_train_valid=True,seeds=seeds,
                              graph_seed=graph_seed)
+with open('sample_preds.pkl','wb') as f:
+    pickle.dump(DTCR_WF.DFs_pred,f)
 
 #Create plot to compare SS/WF performance
 plt.figure()

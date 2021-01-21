@@ -4,6 +4,7 @@ import numpy as np
 from matplotlib import pyplot as plt
 import pandas as pd
 import umap
+import pickle
 from scipy.stats import gaussian_kde
 def GKDE(x,y,z=None):
     xy = np.vstack([x, y])
@@ -13,7 +14,7 @@ def GKDE(x,y,z=None):
     x ,y, z = x[r], y[r], z[r]
     return x,y,z,kernel,r
 
-
+classes = ['Control','RT','9H10','Combo']
 DTCR = DeepTCR_U('Rudqvist_U',device=0)
 DTCR.Get_Data(directory='../../Rudqvist',Load_Prev_Data=False,
                aa_column_beta=1,count_column=2,v_beta_column=7,d_beta_column=14,j_beta_column=21)
@@ -24,7 +25,25 @@ df_x2.columns = ['x','y']
 df_preds = pd.read_csv('preds.csv')
 df_preds = pd.concat([df_preds,df_x2],axis=1)
 
-classes = ['Control','RT','9H10','Combo']
+with open('sample_preds.pkl','rb') as f:
+    DFs_pred = pickle.load(f)
+
+sample_list = []
+pred_list = []
+for cl in classes:
+    temp = DFs_pred[cl].groupby(['Samples']).agg({'y_test': 'first', 'y_pred': 'mean'}).reset_index()
+    temp = temp[temp['y_test'] == 1]
+    temp.sort_values(by='y_pred',ascending=False,inplace=True)
+    sample_list.append(list(temp['Samples']))
+    pred_list.append(list(temp['y_pred']))
+
+sample_list = np.hstack(sample_list)
+pred_list = np.hstack(pred_list)
+df_sample_pred = pd.DataFrame()
+df_sample_pred['Samples'] = sample_list
+df_sample_pred['pred'] = pred_list
+sample_pred_dict = dict(zip(sample_list,pred_list))
+
 win = 10
 DFs = []
 for cl in classes:
@@ -42,8 +61,9 @@ plt.close()
 fig,ax = plt.subplots(4,5,figsize=(10,10))
 for ii,cl in enumerate(classes,0):
     df_class = df_preds[df_preds['label']==cl]
-    for jj,s in enumerate(np.unique(df_class['sample']),0):
-        df_sample = df_class[df_class['sample']==s]
+    sample_sel = np.unique(df_class['sample'])
+    for jj,s_ in enumerate(np.array(df_sample_pred[df_sample_pred['Samples'].isin(sample_sel)]['Samples']),0):
+        df_sample = df_class[df_class['sample']==s_]
         df_sample.sort_values(by=cl,ascending=False,inplace=True)
         df_sample = df_sample.iloc[0:int(np.round(len(df_sample)*0.25))]
         c = np.array(df_sample[cl])
@@ -57,6 +77,7 @@ for ii,cl in enumerate(classes,0):
         ax[ii,jj].set_yticks([])
         ax[ii,jj].set_xlim(xlim)
         ax[ii,jj].set_ylim(ylim)
+        ax[ii,jj].set_title(str(np.round(sample_pred_dict[s_],2)))
         if jj == 0:
             ax[ii,jj].set_ylabel(cl,fontsize=18)
 plt.tight_layout()

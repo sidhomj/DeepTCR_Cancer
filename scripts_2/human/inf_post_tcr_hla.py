@@ -29,6 +29,7 @@ sample_dict = dict(zip(df_master['Pre_Sample'],df_master['ID']))
 df_master = pd.read_csv('Master_Beta.csv')
 df_master.dropna(subset=['Post_Sample'],inplace=True)
 sample_dict.update(dict(zip(df_master['Post_Sample'],df_master['ID'])))
+id_to_sample_dict = dict(zip(df_master['ID'],df_master['Post_Sample']))
 
 pre_preds = pd.read_csv('sample_tcr_hla.csv')
 pre_preds['sample'] = pre_preds['Samples'].map(sample_dict)
@@ -63,6 +64,7 @@ for m in np.unique(pre_preds['model']):
     df_pred = DTCR.Inference_Pred_Dict['crpr']
     p_dict = dict(zip(df_pred['Samples'],df_pred['Pred']))
     sel['post_pred'] = sel['sample'].map(p_dict)
+    sel['post_sample'] = sel['sample'].map(id_to_sample_dict)
     DFs.append(sel)
     predicted_i = DTCR.Sample_Inference(beta_sequences=beta_sequences[sel_idx],
                           v_beta=v_beta[sel_idx],

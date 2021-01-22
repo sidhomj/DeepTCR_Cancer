@@ -25,6 +25,40 @@ import umap
 from scipy import ndimage as ndi
 from matplotlib.patches import Circle
 import pickle
+def histogram_2d_cohort(d, w, grid_size):
+    # center of data
+    d_center = np.mean(np.concatenate(d, axis=0), axis=0)
+    # largest radius
+    d_radius = np.max(np.sum((d_center[np.newaxis, :] - np.concatenate(d, axis=0)) ** 2, axis=1) ** (1 / 2))
+    # padding factors
+    d_pad = 1.2
+    c_pad = 0.9
+
+    # set step and edges of bins for 2d hist
+    x_edges = np.linspace(d_center[0] - (d_radius * d_pad), d_center[0] + (d_radius + d_pad), grid_size + 1)
+    y_edges = np.linspace(d_center[1] - (d_radius * d_pad), d_center[1] + (d_radius + d_pad), grid_size + 1)
+    X, Y = np.meshgrid(x_edges[:-1] + (np.diff(x_edges) / 2), y_edges[:-1] + (np.diff(y_edges) / 2))
+
+    # construct 2d smoothed histograms for each element in lists d and w
+    h = np.stack([np.histogramdd(_d, bins=[x_edges, y_edges], weights=_w)[0] for _d, _w in zip(d, w)], axis=2)
+
+    return dict(h=h, X=X, Y=Y, c=dict(center=d_center, radius=d_radius * d_pad * c_pad))
+def hist2d_denisty_plot(h, X, Y, ax, log_transform=False, gaussian_sigma=-1, normalize=True, cmap=None, vmax=None, vsym=False):
+    D = h
+    if log_transform:
+        D = np.log(h + 1)
+    if gaussian_sigma > 0:
+        D = ndi.gaussian_filter(D, gaussian_sigma)
+    if normalize:
+        D /= np.sum(D)
+
+    if cmap is None:
+        cmap = plt.get_cmap('viridis')
+
+    ax.cla()
+    ax.pcolormesh(X, Y, D, shading='gouraud', cmap=cmap, vmin=-vmax if (vsym == True) & (vmax is not None) else None, vmax=vmax)
+    ax.set(xticks=[], yticks=[], frame_on=False)
+
 
 os.environ["CUDA DEVICE ORDER"] = 'PCI_BUS_ID'
 os.environ["CUDA_VISIBLE_DEVICES"] = "6"
@@ -75,7 +109,7 @@ hla = DTCR.hla_data_seq[sel_idx]
 sample_id = DTCR.sample_id[sel_idx]
 
 file = 'cm038_x2_u_inf.pkl'
-featurize = True
+featurize = False
 if featurize:
     DTCR_U = DeepTCR_U('pre_vae', device=1)
     features = DTCR_U.Sequence_Inference(beta_sequences=beta_sequences, v_beta=v_beta, d_beta=d_beta, j_beta=j_beta, hla=hla)
@@ -92,40 +126,6 @@ else:
 df_plot['x'] = X_2[:,0]
 df_plot['y'] = X_2[:,1]
 
-def histogram_2d_cohort(d, w, grid_size):
-    # center of data
-    d_center = np.mean(np.concatenate(d, axis=0), axis=0)
-    # largest radius
-    d_radius = np.max(np.sum((d_center[np.newaxis, :] - np.concatenate(d, axis=0)) ** 2, axis=1) ** (1 / 2))
-    # padding factors
-    d_pad = 1.2
-    c_pad = 0.9
-
-    # set step and edges of bins for 2d hist
-    x_edges = np.linspace(d_center[0] - (d_radius * d_pad), d_center[0] + (d_radius + d_pad), grid_size + 1)
-    y_edges = np.linspace(d_center[1] - (d_radius * d_pad), d_center[1] + (d_radius + d_pad), grid_size + 1)
-    X, Y = np.meshgrid(x_edges[:-1] + (np.diff(x_edges) / 2), y_edges[:-1] + (np.diff(y_edges) / 2))
-
-    # construct 2d smoothed histograms for each element in lists d and w
-    h = np.stack([np.histogramdd(_d, bins=[x_edges, y_edges], weights=_w)[0] for _d, _w in zip(d, w)], axis=2)
-
-    return dict(h=h, X=X, Y=Y, c=dict(center=d_center, radius=d_radius * d_pad * c_pad))
-def hist2d_denisty_plot(h, X, Y, ax, log_transform=False, gaussian_sigma=-1, normalize=True, cmap=None, vmax=None, vsym=False):
-    D = h
-    if log_transform:
-        D = np.log(h + 1)
-    if gaussian_sigma > 0:
-        D = ndi.gaussian_filter(D, gaussian_sigma)
-    if normalize:
-        D /= np.sum(D)
-
-    if cmap is None:
-        cmap = plt.get_cmap('viridis')
-
-    ax.cla()
-    ax.pcolormesh(X, Y, D, shading='gouraud', cmap=cmap, vmin=-vmax if (vsym == True) & (vmax is not None) else None, vmax=vmax)
-    ax.set(xticks=[], yticks=[], frame_on=False)
-
 grid_size = 250
 gaussian_sigma = 1.25
 density_vmax = 0.0003
@@ -137,6 +137,7 @@ d['sample'] = d['sample'].str.replace('_TCRB.tsv', '')
 d['counts'] = d.groupby('sample')['freq'].transform(lambda x: x / x.min())
 
 s = pd.read_csv('sample_tcr_hla_inf.csv')
+s = s.groupby(['Samples']).agg({'y_pred':'mean','y_test':'mean'}).reset_index()
 s.rename(columns={'y_pred': 'preds','Samples':'sample'}, inplace=True)
 s['sample'] = s['sample'].str.replace('_TCRB.tsv', '')
 s['Response_cat'] = None

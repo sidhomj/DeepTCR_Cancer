@@ -81,6 +81,7 @@ for ii,cl in enumerate(classes,0):
         if jj == 0:
             ax[ii,jj].set_ylabel(cl,fontsize=18)
 plt.tight_layout()
+plt.savefig('unsup.eps')
 
 # fig,ax = plt.subplots(2,2,figsize=(10,10))
 # ax = np.ndarray.flatten(ax)

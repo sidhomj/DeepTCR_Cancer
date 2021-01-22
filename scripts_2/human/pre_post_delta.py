@@ -69,8 +69,6 @@ plt.hist(np.log10(df_top['delta_freq']),100)
 df_bottom = df_merge[df_merge['pred'] < cut_bottom]
 plt.hist(np.log10(df_bottom['delta_freq']),100)
 
-
-
 df_merge['pred'][df_merge['pred']>cut_top] = 1.0
 df_merge['pred'][df_merge['pred']<=cut_top] = 0.0
 
@@ -80,5 +78,37 @@ df_agg = df_merge.groupby(['ID_x']).agg({'w_pred_pre':'sum','w_pred_post':'sum',
 df_agg['delta'] = df_agg['w_pred_post'] - df_agg['w_pred_pre']
 #df_agg = pd.melt(df_agg,id_vars=['ID_x','gt_x'],value_vars=['w_pred_pre','w_pred_post'])
 sns.violinplot(data=df_agg,x='gt_x',y='delta',cut=0)
+
+df_crpr = df_merge[df_merge['gt_x'] == 'crpr']
+df_sdpd = df_merge[df_merge['gt_x'] == 'sdpd']
+# df_crpr = df_crpr[df_crpr['pred'] > cut_top]
+# df_sdpd = df_sdpd[df_sdpd['pred'] < cut_bottom]
+df_crpr = df_crpr[df_crpr['pred'] < cut_bottom]
+df_sdpd = df_sdpd[df_sdpd['pred'] > cut_top]
+df_plot = pd.concat([df_crpr,df_sdpd])
+
+sns.violinplot(data=df_plot,x='gt_x',y='delta_freq',cut=0,)
+sns.scatterplot(data=df_crpr,x='freq_x',y='freq_y')
+plt.yscale('log')
+plt.xscale('log')
+
+x = np.log10(np.array(df_crpr['freq_x']))
+y = np.log10(np.array(df_crpr['freq_y']))
+x,y,c,_,_ = GKDE(x,y)
+plt.figure()
+plt.scatter(x,y,c=c,cmap='jet')
+plt.plot([-5, 0], [-5, 0], color='navy', lw=2, linestyle='--')
+
+
+x = np.log10(np.array(df_sdpd['freq_x']))
+y = np.log10(np.array(df_sdpd['freq_y']))
+x,y,c,_,_ = GKDE(x,y)
+plt.figure()
+plt.scatter(x,y,c=c,cmap='jet')
+plt.plot([-5, 0], [-5, 0], color='navy', lw=2, linestyle='--')
+
+
+
+
 
 

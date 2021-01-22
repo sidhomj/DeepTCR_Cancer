@@ -76,16 +76,13 @@ for m in np.unique(pre_preds['model']):
 
 predicted_ = np.divide(predicted_, counts_, out=np.zeros_like(predicted_), where=counts_ != 0)
 
-p.join()
-p.close()
 df_pred = pd.concat(DFs)
-
 df_pred = df_pred[['Samples','post_pred','y_test']]
 df_pred = df_pred.rename(columns={'post_pred':'y_pred'})
 df_pred.to_csv('sample_tcr_hla_inf.csv',index=False)
 
-predicted = DTCR.Sample_Inference(beta_sequences=beta_sequences,v_beta=v_beta,d_beta=d_beta,j_beta=j_beta,
-                      hla=hla,counts=counts,batch_size=100000)
-
 with open('cm038_ft_pred_inf.pkl','wb') as f:
-    pickle.dump([None,predicted],f,protocol=4)
+    pickle.dump([None,predicted_],f,protocol=4)
+
+p.join()
+p.close()

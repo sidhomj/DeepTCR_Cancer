@@ -30,9 +30,9 @@ os.environ["CUDA DEVICE ORDER"] = 'PCI_BUS_ID'
 os.environ["CUDA_VISIBLE_DEVICES"] = "6"
 
 DTCR = DeepTCR_WF('Human_TIL',device='/device:GPU:0')
-DTCR.Get_Data(directory='../../Data',Load_Prev_Data=False,
+DTCR.Get_Data(directory='../../Data_Post',Load_Prev_Data=False,
                aa_column_beta=1,count_column=2,v_beta_column=7,d_beta_column=14,j_beta_column=21,data_cut=1.0,
-              hla='../../Data/HLA_Ref_sup_AB.csv')
+              hla='../../Data_Post/HLA_Ref_sup_AB.csv')
 
 with open('cm038_ft_pred_inf.pkl','rb') as f:
     features,predicted = pickle.load(f)
@@ -71,8 +71,8 @@ d_beta = DTCR.d_beta
 hla = DTCR.hla_data_seq
 sample_id = DTCR.sample_id
 
-file = 'cm038_x2_u.pkl'
-featurize = False
+file = 'cm038_x2_u_inf.pkl'
+featurize = True
 if featurize:
     DTCR_U = DeepTCR_U('test_hum', device=1)
     DTCR_U.Load_Data(beta_sequences=beta_sequences, v_beta=v_beta, d_beta=d_beta, j_beta=j_beta, hla=hla)

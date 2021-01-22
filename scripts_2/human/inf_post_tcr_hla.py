@@ -46,3 +46,9 @@ roc_auc_score(df_pred['label_bin'],df_pred['Pred'])
 df_pred = df_pred[['Samples','Pred','label_bin']]
 df_pred = df_pred.rename(columns={'Pred':'y_pred','label_bin':'y_test'})
 df_pred.to_csv('sample_tcr_hla_inf.csv',index=False)
+
+predicted = DTCR.Sample_Inference(beta_sequences=beta_sequences,v_beta=v_beta,d_beta=d_beta,j_beta=j_beta,
+                      hla=hla,counts=counts,batch_size=100000)
+
+with open('cm038_ft_pred_inf.pkl','wb') as f:
+    pickle.dump([None,predicted],f,protocol=4)

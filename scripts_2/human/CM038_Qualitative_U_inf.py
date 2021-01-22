@@ -37,16 +37,19 @@ DTCR.Get_Data(directory='../../Data_Post',Load_Prev_Data=False,
 with open('cm038_ft_pred_inf.pkl','rb') as f:
     features,predicted = pickle.load(f)
 
+sel_idx = np.where(np.sum(predicted,axis=1)!=0.0)[0]
+predicted = predicted[sel_idx]
+
 win = 10
 cut_bottom = np.percentile(predicted[:,0],win)
 cut_top = np.percentile(predicted[:,0],100-win)
 
 df_plot = pd.DataFrame()
-df_plot['beta'] = DTCR.beta_sequences
-df_plot['sample'] = DTCR.sample_id
+df_plot['beta'] = DTCR.beta_sequences[sel_idx]
+df_plot['sample'] = DTCR.sample_id[sel_idx]
 df_plot['pred'] = predicted[:,0]
-df_plot['gt'] = DTCR.class_id
-df_plot['freq'] = DTCR.freq
+df_plot['gt'] = DTCR.class_id[sel_idx]
+df_plot['freq'] = DTCR.freq[sel_idx]
 
 # plt.figure()
 # ax = sns.distplot(df_plot['pred'],1000,color='k',kde=False)
@@ -64,15 +67,15 @@ df_plot['freq'] = DTCR.freq
 # plt.ylabel('')
 # plt.show()
 
-beta_sequences = DTCR.beta_sequences
-v_beta = DTCR.v_beta
-j_beta = DTCR.j_beta
-d_beta = DTCR.d_beta
-hla = DTCR.hla_data_seq
-sample_id = DTCR.sample_id
+beta_sequences = DTCR.beta_sequences[sel_idx]
+v_beta = DTCR.v_beta[sel_idx]
+j_beta = DTCR.j_beta[sel_idx]
+d_beta = DTCR.d_beta[sel_idx]
+hla = DTCR.hla_data_seq[sel_idx]
+sample_id = DTCR.sample_id[sel_idx]
 
 file = 'cm038_x2_u_inf.pkl'
-featurize = False
+featurize = True
 if featurize:
     DTCR_U = DeepTCR_U('pre_vae', device=1)
     features = DTCR_U.Sequence_Inference(beta_sequences=beta_sequences, v_beta=v_beta, d_beta=d_beta, j_beta=j_beta, hla=hla)

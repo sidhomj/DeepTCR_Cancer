@@ -5,8 +5,8 @@ import matplotlib.pyplot as plt
 from sklearn.metrics import roc_auc_score,roc_curve
 
 model = 'TCR'
-model = 'HLA'
-model = 'TCR+HLA'
+# model = 'HLA'
+# model = 'TCR+HLA'
 if model == 'TCR':
     file_base = 'sample_tcr'
 elif model =='HLA':

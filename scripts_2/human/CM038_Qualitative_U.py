@@ -34,7 +34,7 @@ DTCR.Get_Data(directory='../../Data',Load_Prev_Data=False,
                aa_column_beta=1,count_column=2,v_beta_column=7,d_beta_column=14,j_beta_column=21,data_cut=1.0,
               hla='../../Data/HLA_Ref_sup_AB.csv')
 
-with open('cm038_ft_pred_inf.pkl','rb') as f:
+with open('cm038_ft_pred.pkl','rb') as f:
     features,predicted = pickle.load(f)
 
 win = 10
@@ -74,12 +74,15 @@ sample_id = DTCR.sample_id
 file = 'cm038_x2_u.pkl'
 featurize = False
 if featurize:
-    DTCR_U = DeepTCR_U('test_hum', device=1)
+    DTCR_U = DeepTCR_U('pre_vae', device=1)
     DTCR_U.Load_Data(beta_sequences=beta_sequences, v_beta=v_beta, d_beta=d_beta, j_beta=j_beta, hla=hla)
     DTCR_U.Train_VAE(Load_Prev_Data=False, latent_dim=128,stop_criterion=0.001,accuracy_min=0.98)
-    X_2 = umap.UMAP().fit_transform(DTCR_U.features)
+    umap_obj = umap.UMAP()
+    X_2 = umap_obj.fit_transform(DTCR_U.features)
     with open(file, 'wb') as f:
         pickle.dump(X_2, f, protocol=4)
+    with open('umap_obj.pkl', 'wb') as f:
+        pickle.dump(umap_obj, f, protocol=4)
 else:
     with open(file,'rb') as f:
         X_2 = pickle.load(f)

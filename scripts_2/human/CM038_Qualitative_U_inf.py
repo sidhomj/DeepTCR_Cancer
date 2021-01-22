@@ -72,12 +72,13 @@ hla = DTCR.hla_data_seq
 sample_id = DTCR.sample_id
 
 file = 'cm038_x2_u_inf.pkl'
-featurize = True
+featurize = False
 if featurize:
-    DTCR_U = DeepTCR_U('test_hum', device=1)
-    DTCR_U.Load_Data(beta_sequences=beta_sequences, v_beta=v_beta, d_beta=d_beta, j_beta=j_beta, hla=hla)
-    DTCR_U.Train_VAE(Load_Prev_Data=False, latent_dim=128,stop_criterion=0.001,accuracy_min=0.98)
-    X_2 = umap.UMAP().fit_transform(DTCR_U.features)
+    DTCR_U = DeepTCR_U('pre_vae', device=1)
+    features = DTCR_U.Sequence_Inference(beta_sequences=beta_sequences, v_beta=v_beta, d_beta=d_beta, j_beta=j_beta, hla=hla)
+    with open('umap_obj.pkl', 'rb') as f:
+        umap_obj = pickle.load(f)
+    X_2 = umap_obj.transform(features)
     with open(file, 'wb') as f:
         pickle.dump(X_2, f, protocol=4)
 else:
@@ -134,11 +135,20 @@ d['file'] = d['sample']
 d['sample'] = d['sample'].str.replace('_TCRB.tsv', '')
 d['counts'] = d.groupby('sample')['freq'].transform(lambda x: x / x.min())
 
-s = pd.read_csv('CM038_BM2.csv')
-s.rename(columns={'DeepTCR': 'preds'}, inplace=True)
-s = s.sort_values('preds')
+s = pd.read_csv('sample_tcr_hla_inf.csv')
+s.rename(columns={'y_pred': 'preds','Samples':'sample'}, inplace=True)
+s['sample'] = s['sample'].str.replace('_TCRB.tsv', '')
+s['Response_cat'] = None
+s['Response_cat'][s['y_test']==1] = 'crpr'
+s['Response_cat'][s['y_test']==0] = 'sdpd'
 c_dict = dict(crpr='blue', sdpd='red')
 color_labels = [c_dict[_] for _ in s['Response_cat'].values]
+
+# s = pd.read_csv('CM038_BM2.csv')
+# s.rename(columns={'DeepTCR': 'preds'}, inplace=True)
+# s = s.sort_values('preds')
+# c_dict = dict(crpr='blue', sdpd='red')
+# color_labels = [c_dict[_] for _ in s['Response_cat'].values]
 
 cmap_blue = plt.get_cmap('Blues')
 cmap_blue(0)

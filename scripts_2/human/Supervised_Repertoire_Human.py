@@ -57,7 +57,7 @@ for m in models:
     fpr, tpr, th = roc_curve(df['Label'], df[m])
     class_name = m
     ax1.plot(fpr, tpr, lw=2, label='%s (%0.2f)' % (class_name, roc_score))
-ax1.legend(loc='lower left',frameon=False)
+ax1.legend(loc='upper left',frameon=False)
 
 ax2 = f.add_axes([0.48, .2, .4, .4])
 ax2.spines['right'].set_visible(False)

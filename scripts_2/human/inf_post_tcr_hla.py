@@ -7,7 +7,7 @@ import glob
 import pandas as pd
 from multiprocessing import Pool
 
-gpu = 2
+gpu = 1
 os.environ["CUDA DEVICE ORDER"] = 'PCI_BUS_ID'
 os.environ["CUDA_VISIBLE_DEVICES"] = str(gpu)
 
@@ -48,6 +48,7 @@ DTCR = DeepTCR_WF('HLA_TCR')
 DFs = []
 p = Pool(40)
 for m in np.unique(pre_preds['model']):
+    print(m)
     sel = pre_preds[pre_preds['model']==m]
     sel_idx = np.where(np.isin(pt_id,np.array(sel['sample'])))[0]
     DTCR.Sample_Inference(sample_labels=pt_id[sel_idx],
@@ -70,7 +71,8 @@ for m in np.unique(pre_preds['model']):
                           hla=hla[sel_idx],
                           counts=counts[sel_idx],
                           models=[m],
-                          p=p)
+                          p=p,
+                        batch_size=50000)
     predicted_[sel_idx] += predicted_i
     counts_[sel_idx] += 1
 

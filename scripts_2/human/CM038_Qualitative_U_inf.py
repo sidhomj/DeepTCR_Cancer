@@ -92,7 +92,6 @@ else:
 df_plot['x'] = X_2[:,0]
 df_plot['y'] = X_2[:,1]
 
-
 def histogram_2d_cohort(d, w, grid_size):
     # center of data
     d_center = np.mean(np.concatenate(d, axis=0), axis=0)
@@ -111,7 +110,6 @@ def histogram_2d_cohort(d, w, grid_size):
     h = np.stack([np.histogramdd(_d, bins=[x_edges, y_edges], weights=_w)[0] for _d, _w in zip(d, w)], axis=2)
 
     return dict(h=h, X=X, Y=Y, c=dict(center=d_center, radius=d_radius * d_pad * c_pad))
-
 def hist2d_denisty_plot(h, X, Y, ax, log_transform=False, gaussian_sigma=-1, normalize=True, cmap=None, vmax=None, vsym=False):
     D = h
     if log_transform:

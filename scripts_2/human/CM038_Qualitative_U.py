@@ -25,6 +25,40 @@ import umap
 from scipy import ndimage as ndi
 from matplotlib.patches import Circle
 import pickle
+def histogram_2d_cohort(d, w, grid_size):
+    # center of data
+    d_center = np.mean(np.concatenate(d, axis=0), axis=0)
+    # largest radius
+    d_radius = np.max(np.sum((d_center[np.newaxis, :] - np.concatenate(d, axis=0)) ** 2, axis=1) ** (1 / 2))
+    # padding factors
+    d_pad = 1.2
+    c_pad = 0.9
+
+    # set step and edges of bins for 2d hist
+    x_edges = np.linspace(d_center[0] - (d_radius * d_pad), d_center[0] + (d_radius + d_pad), grid_size + 1)
+    y_edges = np.linspace(d_center[1] - (d_radius * d_pad), d_center[1] + (d_radius + d_pad), grid_size + 1)
+    X, Y = np.meshgrid(x_edges[:-1] + (np.diff(x_edges) / 2), y_edges[:-1] + (np.diff(y_edges) / 2))
+
+    # construct 2d smoothed histograms for each element in lists d and w
+    h = np.stack([np.histogramdd(_d, bins=[x_edges, y_edges], weights=_w)[0] for _d, _w in zip(d, w)], axis=2)
+
+    return dict(h=h, X=X, Y=Y, c=dict(center=d_center, radius=d_radius * d_pad * c_pad))
+def hist2d_denisty_plot(h, X, Y, ax, log_transform=False, gaussian_sigma=-1, normalize=True, cmap=None, vmax=None, vsym=False):
+    D = h
+    if log_transform:
+        D = np.log(h + 1)
+    if gaussian_sigma > 0:
+        D = ndi.gaussian_filter(D, gaussian_sigma)
+    if normalize:
+        D /= np.sum(D)
+
+    if cmap is None:
+        cmap = plt.get_cmap('viridis')
+
+    ax.cla()
+    ax.pcolormesh(X, Y, D, shading='gouraud', cmap=cmap, vmin=-vmax if (vsym == True) & (vmax is not None) else None, vmax=vmax)
+    ax.set(xticks=[], yticks=[], frame_on=False)
+
 
 os.environ["CUDA DEVICE ORDER"] = 'PCI_BUS_ID'
 os.environ["CUDA_VISIBLE_DEVICES"] = "6"
@@ -92,41 +126,6 @@ df_plot['x'] = X_2[:,0]
 df_plot['y'] = X_2[:,1]
 
 
-def histogram_2d_cohort(d, w, grid_size):
-    # center of data
-    d_center = np.mean(np.concatenate(d, axis=0), axis=0)
-    # largest radius
-    d_radius = np.max(np.sum((d_center[np.newaxis, :] - np.concatenate(d, axis=0)) ** 2, axis=1) ** (1 / 2))
-    # padding factors
-    d_pad = 1.2
-    c_pad = 0.9
-
-    # set step and edges of bins for 2d hist
-    x_edges = np.linspace(d_center[0] - (d_radius * d_pad), d_center[0] + (d_radius + d_pad), grid_size + 1)
-    y_edges = np.linspace(d_center[1] - (d_radius * d_pad), d_center[1] + (d_radius + d_pad), grid_size + 1)
-    X, Y = np.meshgrid(x_edges[:-1] + (np.diff(x_edges) / 2), y_edges[:-1] + (np.diff(y_edges) / 2))
-
-    # construct 2d smoothed histograms for each element in lists d and w
-    h = np.stack([np.histogramdd(_d, bins=[x_edges, y_edges], weights=_w)[0] for _d, _w in zip(d, w)], axis=2)
-
-    return dict(h=h, X=X, Y=Y, c=dict(center=d_center, radius=d_radius * d_pad * c_pad))
-
-def hist2d_denisty_plot(h, X, Y, ax, log_transform=False, gaussian_sigma=-1, normalize=True, cmap=None, vmax=None, vsym=False):
-    D = h
-    if log_transform:
-        D = np.log(h + 1)
-    if gaussian_sigma > 0:
-        D = ndi.gaussian_filter(D, gaussian_sigma)
-    if normalize:
-        D /= np.sum(D)
-
-    if cmap is None:
-        cmap = plt.get_cmap('viridis')
-
-    ax.cla()
-    ax.pcolormesh(X, Y, D, shading='gouraud', cmap=cmap, vmin=-vmax if (vsym == True) & (vmax is not None) else None, vmax=vmax)
-    ax.set(xticks=[], yticks=[], frame_on=False)
-
 grid_size = 250
 gaussian_sigma = 1.25
 density_vmax = 0.0003
@@ -137,11 +136,30 @@ d['file'] = d['sample']
 d['sample'] = d['sample'].str.replace('_TCRB.tsv', '')
 d['counts'] = d.groupby('sample')['freq'].transform(lambda x: x / x.min())
 
-s = pd.read_csv('CM038_BM2.csv')
-s.rename(columns={'DeepTCR': 'preds'}, inplace=True)
-s = s.sort_values('preds')
+s = pd.read_csv('sample_tcr_hla.csv')
+s = s.groupby(['Samples']).agg({'y_pred':'mean','y_test':'mean'}).reset_index()
+s.rename(columns={'y_pred': 'preds','Samples':'sample'}, inplace=True)
+
+#select for 35 samples with matched pre/post
+df_master = pd.read_csv('Master_Beta.csv')
+df_master.dropna(subset=['Pre_Sample','Post_Sample'],inplace=True)
+s['sample'].isin(df_master['Pre_Sample'])
+s = s[s['sample'].isin(df_master['Pre_Sample'])]
+
+s['sample'] = s['sample'].str.replace('_TCRB.tsv', '')
+s['Response_cat'] = None
+s['Response_cat'][s['y_test']==1] = 'crpr'
+s['Response_cat'][s['y_test']==0] = 'sdpd'
+s.sort_values(by='preds',inplace=True)
 c_dict = dict(crpr='blue', sdpd='red')
 color_labels = [c_dict[_] for _ in s['Response_cat'].values]
+
+
+# s = pd.read_csv('CM038_BM2.csv')
+# s.rename(columns={'DeepTCR': 'preds'}, inplace=True)
+# s = s.sort_values('preds')
+# c_dict = dict(crpr='blue', sdpd='red')
+# color_labels = [c_dict[_] for _ in s['Response_cat'].values]
 
 cmap_blue = plt.get_cmap('Blues')
 cmap_blue(0)
@@ -159,10 +177,11 @@ map_labels = [map_dict[_] for _ in s['Response_cat'].values]
 # cmap(0)
 # cmap._lut = cmap._lut[np.concatenate([np.flip(np.arange(256)), [257, 256, 258]])]
 # cmap._lut[[0, 256]] = np.ones(4)
+H = histogram_2d_cohort([d.loc[d['sample'] == i, ['y', 'x']].values for i in s['sample'].values], [d.loc[d['sample'] == i, 'counts'].values for i in s['sample'].values], grid_size)
+
 
 fig_sample_density, ax = plt.subplots(nrows=4, ncols=11)
 ax_supp_density = ax.flatten()
-H = histogram_2d_cohort([d.loc[d['sample'] == i, ['y', 'x']].values for i in s['sample'].values], [d.loc[d['sample'] == i, 'counts'].values for i in s['sample'].values], grid_size)
 for i in range(H['h'].shape[2]):
     hist2d_denisty_plot(H['h'][:, :, i], H['X'], H['Y'], ax_supp_density[i], log_transform=True, gaussian_sigma=gaussian_sigma, cmap=map_labels[i], vmax=density_vmax)
     ax_supp_density[i].add_artist(Circle(H['c']['center'], H['c']['radius'], color=color_labels[i], lw=3, fill=False))

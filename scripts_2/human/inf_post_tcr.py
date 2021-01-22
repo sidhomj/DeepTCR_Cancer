@@ -47,6 +47,7 @@ DTCR = DeepTCR_WF('TCR')
 DFs = []
 p = Pool(40)
 for m in np.unique(pre_preds['model']):
+    print(m)
     sel = pre_preds[pre_preds['model']==m]
     sel_idx = np.where(np.isin(pt_id,np.array(sel['sample'])))[0]
     DTCR.Sample_Inference(sample_labels=pt_id[sel_idx],
@@ -67,7 +68,6 @@ for m in np.unique(pre_preds['model']):
 p.join()
 p.close()
 df_pred = pd.concat(DFs)
-
 df_pred = df_pred[['post_sample','post_pred','y_test']]
 df_pred = df_pred.rename(columns={'post_pred':'y_pred','post_sample':'Samples'})
 df_pred.to_csv('sample_tcr_inf.csv',index=False)

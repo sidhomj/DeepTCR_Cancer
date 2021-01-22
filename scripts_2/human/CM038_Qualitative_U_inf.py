@@ -141,6 +141,7 @@ s['sample'] = s['sample'].str.replace('_TCRB.tsv', '')
 s['Response_cat'] = None
 s['Response_cat'][s['y_test']==1] = 'crpr'
 s['Response_cat'][s['y_test']==0] = 'sdpd'
+s.sort_values(by='preds',inplace=True)
 c_dict = dict(crpr='blue', sdpd='red')
 color_labels = [c_dict[_] for _ in s['Response_cat'].values]
 

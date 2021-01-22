@@ -42,6 +42,8 @@ for ii,_ in enumerate(range(0,600,6),0):
 pt_id = np.array(list(map(sample_dict.get,sample_id)))
 pre_preds = pre_preds[pre_preds['sample'].isin(np.unique(pt_id))]
 
+predicted_ = np.zeros_like(DTCR.predicted)
+counts_ = np.zeros_like(DTCR.predicted)
 DTCR = DeepTCR_WF('HLA_TCR')
 DFs = []
 p = Pool(40)
@@ -61,6 +63,18 @@ for m in np.unique(pre_preds['model']):
     p_dict = dict(zip(df_pred['Samples'],df_pred['Pred']))
     sel['post_pred'] = sel['sample'].map(p_dict)
     DFs.append(sel)
+    predicted_i = DTCR.Sample_Inference(beta_sequences=beta_sequences[sel_idx],
+                          v_beta=v_beta[sel_idx],
+                          d_beta=d_beta[sel_idx],
+                          j_beta=j_beta[sel_idx],
+                          hla=hla[sel_idx],
+                          counts=counts[sel_idx],
+                          models=[m],
+                          p=p)
+    predicted_[sel_idx] += predicted_i
+    counts_[sel_idx] += 1
+
+predicted_ = np.divide(predicted_, counts_, out=np.zeros_like(predicted_), where=counts_ != 0)
 
 p.join()
 p.close()

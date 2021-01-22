@@ -81,8 +81,8 @@ for m in np.unique(pre_preds['model']):
 predicted_ = np.divide(predicted_, counts_, out=np.zeros_like(predicted_), where=counts_ != 0)
 
 df_pred = pd.concat(DFs)
-df_pred = df_pred[['Samples','post_pred','y_test']]
-df_pred = df_pred.rename(columns={'post_pred':'y_pred'})
+df_pred = df_pred[['post_sample','post_pred','y_test']]
+df_pred = df_pred.rename(columns={'post_pred':'y_pred','post_sample':'Samples'})
 df_pred.to_csv('sample_tcr_hla_inf.csv',index=False)
 
 with open('cm038_ft_pred_inf.pkl','wb') as f:

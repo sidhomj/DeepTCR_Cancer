@@ -29,6 +29,7 @@ sample_dict = dict(zip(df_master['Pre_Sample'],df_master['ID']))
 df_master = pd.read_csv('Master_Beta.csv')
 df_master.dropna(subset=['Post_Sample'],inplace=True)
 sample_dict.update(dict(zip(df_master['Post_Sample'],df_master['ID'])))
+id_to_sample_dict = dict(zip(df_master['ID'],df_master['Post_Sample']))
 
 pre_preds = pd.read_csv('sample_hla.csv')
 pre_preds['sample'] = pre_preds['Samples'].map(sample_dict)
@@ -60,12 +61,13 @@ for m in np.unique(pre_preds['model']):
     df_pred = DTCR.Inference_Pred_Dict['crpr']
     p_dict = dict(zip(df_pred['Samples'],df_pred['Pred']))
     sel['post_pred'] = sel['sample'].map(p_dict)
+    sel['post_sample'] = sel['sample'].map(id_to_sample_dict)
     DFs.append(sel)
 
 p.join()
 p.close()
 df_pred = pd.concat(DFs)
 
-df_pred = df_pred[['Samples','post_pred','y_test']]
-df_pred = df_pred.rename(columns={'post_pred':'y_pred'})
+df_pred = df_pred[['post_sample','post_pred','y_test']]
+df_pred = df_pred.rename(columns={'post_pred':'y_pred','post_sample':'Samples'})
 df_pred.to_csv('sample_hla_inf.csv',index=False)

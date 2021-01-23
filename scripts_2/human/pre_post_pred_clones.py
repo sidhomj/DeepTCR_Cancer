@@ -47,9 +47,9 @@ def plot_pre_post(df_pre,df_post,label,cut_pre,cut_post,thresh=None):
     for i in range(len(befores)):
         ax.plot( [0,1], [befores[i], afters[i]], c='k')
     ax.set_xticks([0,1])
-    ax.set_xticklabels(['Pre-Tx', 'Post-Tx'])
+    ax.set_xticklabels(['Pre-Tx', 'Post-Tx'],fontsize=24)
 
-    return df_sel_merge
+    return df_sel_merge,ax
 
 gpu = 2
 os.environ["CUDA DEVICE ORDER"] = 'PCI_BUS_ID'
@@ -105,12 +105,16 @@ df_post['seq_id'] = df_post['beta'] + '_' + df_post['ID'].astype(str)
 thresh = None
 
 #crpr
-plot_pre_post(df_pre,df_post,label='crpr',cut_pre=cut_top_pre,cut_post=cut_top_post,thresh=thresh)
+_,ax = plot_pre_post(df_pre,df_post,label='crpr',cut_pre=cut_top_pre,cut_post=cut_top_post,thresh=thresh)
+y_ticks = ax.get_yticklabels()
+ax.set_yticklabels(y_ticks, rotation=0, fontsize=14)
 plt.title('CRPR',fontsize=24)
 plt.savefig('pre_post_clones_crpr.png',dpi=1200)
 
 #sdpd
-plot_pre_post(df_pre,df_post,label='sdpd',cut_pre=cut_bottom_pre,cut_post=cut_bottom_post,thresh=thresh)
+_,ax=plot_pre_post(df_pre,df_post,label='sdpd',cut_pre=cut_bottom_pre,cut_post=cut_bottom_post,thresh=thresh)
+y_ticks = ax.get_yticklabels()
+ax.set_yticklabels(y_ticks, rotation=0, fontsize=14)
 plt.title('SDPD',fontsize=24)
 plt.savefig('pre_post_clones_sdpd.png',dpi=1200)
 

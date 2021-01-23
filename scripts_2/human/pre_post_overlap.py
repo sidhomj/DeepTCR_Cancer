@@ -109,7 +109,16 @@ s.rename(columns={'y_pred': 'preds','Samples':'sample'}, inplace=True)
 pred_dict = dict(zip(s['sample'],s['preds']))
 df_plot['pred'] = df_plot['sample'].map(pred_dict)
 
-sns.violinplot(data=df_plot,x='label',y='overlap',cut=0)
+ax = sns.violinplot(data=df_plot,x='label',y='overlap',cut=0)
+x_ticks = ax.get_xticklabels()
+ax.set_xticklabels(x_ticks, rotation=0, fontsize=18)
+plt.xlabel('')
+plt.ylabel('% Overlap',fontsize=18)
+plt.ylim([0,1])
+y_ticks = ax.get_yticklabels()
+ax.set_yticklabels(y_ticks,fontsize=14)
+plt.savefig('overlap.eps')
+
 _,p_val = mannwhitneyu(df_plot['overlap'][df_plot['label']=='crpr'],df_plot['overlap'][df_plot['label']=='sdpd'])
 
 plt.figure()

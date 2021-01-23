@@ -32,16 +32,28 @@ df_plot = df_plot.groupby(['Sample']).agg({'TCR':'mean','HLA':'mean','TCR+HLA':'
 sns.scatterplot(data=df_plot,x='TCR',y='HLA',linewidth=0,hue='Label')
 plt.xlim([0,1])
 plt.ylim([0,1])
+plt.xlabel('TCR',fontsize=18)
+plt.ylabel('HLA',fontsize=18)
+plt.legend(frameon=False)
+plt.savefig('tcr_v_hla.eps')
 spearmanr(df_plot['TCR'],df_plot['HLA'])
 
 #HLA vs TCR+HLA
 sns.scatterplot(data=df_plot,x='HLA',y='TCR+HLA',linewidth=0,hue='Label')
 plt.xlim([0,1])
 plt.ylim([0,1])
+plt.xlabel('HLA',fontsize=18)
+plt.ylabel('TCR+HLA',fontsize=18)
+plt.legend(frameon=False)
+plt.savefig('hla_v_tcrhla.eps')
 spearmanr(df_plot['HLA'],df_plot['TCR+HLA'])
 
 #TCR vs TCR_HLA
 sns.scatterplot(data=df_plot,x='TCR',y='TCR+HLA',linewidth=0,hue='Label')
 plt.xlim([0,1])
 plt.ylim([0,1])
+plt.xlabel('TCR',fontsize=18)
+plt.ylabel('TCR+HLA',fontsize=18)
+plt.legend(frameon=False)
+plt.savefig('tcr_v_tcrhla.eps')
 spearmanr(df_plot['TCR'],df_plot['TCR+HLA'])

@@ -139,11 +139,18 @@ d['counts'] = d.groupby('sample')['freq'].transform(lambda x: x / x.min())
 s = pd.read_csv('sample_tcr_hla_inf.csv')
 s = s.groupby(['Samples']).agg({'y_pred':'mean','y_test':'mean'}).reset_index()
 s.rename(columns={'y_pred': 'preds','Samples':'sample'}, inplace=True)
+df_master = pd.read_csv('Master_Beta.csv')
+df_master.dropna(subset=['Pre_Sample','Post_Sample'],inplace=True)
+sample_dict = dict(zip(df_master['Post_Sample'],df_master['ID'].astype(str)))
+s['ID'] = s['sample'].map(sample_dict)
 s['sample'] = s['sample'].str.replace('_TCRB.tsv', '')
 s['Response_cat'] = None
 s['Response_cat'][s['y_test']==1] = 'crpr'
 s['Response_cat'][s['y_test']==0] = 'sdpd'
-s.sort_values(by='preds',inplace=True)
+
+s_ref = pd.read_csv('order_samples_sel.csv')
+s = s.set_index('ID').reindex(s_ref['ID'].astype(str)).reset_index()
+
 c_dict = dict(crpr='blue', sdpd='red')
 color_labels = [c_dict[_] for _ in s['Response_cat'].values]
 
@@ -237,11 +244,11 @@ for i in range(D.shape[2]):
 [ax_diff_sample[i].set(xticks=[], yticks=[], frame_on=False) for i in range(D.shape[2], len(ax_diff_sample))]
 plt.gcf().set_size_inches(13, 5.5)
 plt.tight_layout()
-fig_sample_diff.savefig('qual/sample_diff.tif',format='tif',dpi=1200)
+fig_sample_diff.savefig('sample_diff_inf.tif',format='tif',dpi=1200)
 
 fig_diff_overall, ax_diff_overall = plt.subplots()
 hist2d_denisty_plot(np.mean(D, axis=2), Ha['X'], Ha['Y'], ax_diff_overall, cmap='bwr', vmax=diff_vmax, vsym=True, normalize=False)
 ax_diff_overall.add_artist(Circle(H['c']['center'], H['c']['radius'], color='grey', lw=5, fill=False))
 plt.gcf().set_size_inches(5, 5)
 plt.tight_layout()
-fig_diff_overall.savefig('qual/cohort_diff.tif',format='tif',dpi=1200)
+fig_diff_overall.savefig('cohort_diff_inf.tif',format='tif',dpi=1200)

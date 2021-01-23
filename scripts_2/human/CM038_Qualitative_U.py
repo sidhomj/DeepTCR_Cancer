@@ -141,11 +141,13 @@ s = pd.read_csv('sample_tcr_hla.csv')
 s = s.groupby(['Samples']).agg({'y_pred':'mean','y_test':'mean'}).reset_index()
 s.rename(columns={'y_pred': 'preds','Samples':'sample'}, inplace=True)
 
-# #select for 35 samples with matched pre/post
-# df_master = pd.read_csv('Master_Beta.csv')
-# df_master.dropna(subset=['Pre_Sample','Post_Sample'],inplace=True)
-# s['sample'].isin(df_master['Pre_Sample'])
-# s = s[s['sample'].isin(df_master['Pre_Sample'])]
+#select for 35 samples with matched pre/post
+df_master = pd.read_csv('Master_Beta.csv')
+df_master.dropna(subset=['Pre_Sample','Post_Sample'],inplace=True)
+sample_dict = dict(zip(df_master['Pre_Sample'],df_master['ID'].astype(str)))
+s['ID'] = s['sample'].map(sample_dict)
+s['sample'].isin(df_master['Pre_Sample'])
+s = s[s['sample'].isin(df_master['Pre_Sample'])]
 
 s['sample'] = s['sample'].str.replace('_TCRB.tsv', '')
 s['Response_cat'] = None
@@ -154,7 +156,7 @@ s['Response_cat'][s['y_test']==0] = 'sdpd'
 s.sort_values(by='preds',inplace=True)
 c_dict = dict(crpr='blue', sdpd='red')
 color_labels = [c_dict[_] for _ in s['Response_cat'].values]
-
+s.to_csv('order_samples_sel.csv',index=False)
 
 # s = pd.read_csv('CM038_BM2.csv')
 # s.rename(columns={'DeepTCR': 'preds'}, inplace=True)
@@ -246,6 +248,8 @@ for i in range(D.shape[2]):
 plt.gcf().set_size_inches(13, 5.5)
 plt.tight_layout()
 fig_sample_diff.savefig('sample_diff.tif',format='tif',dpi=1200)
+fig_sample_diff.savefig('sample_diff_sel.tif',format='tif',dpi=1200)
+
 
 fig_diff_overall, ax_diff_overall = plt.subplots()
 hist2d_denisty_plot(np.mean(D, axis=2), Ha['X'], Ha['Y'], ax_diff_overall, cmap='bwr', vmax=diff_vmax, vsym=True, normalize=False)
@@ -253,3 +257,5 @@ ax_diff_overall.add_artist(Circle(H['c']['center'], H['c']['radius'], color='gre
 plt.gcf().set_size_inches(5, 5)
 plt.tight_layout()
 fig_diff_overall.savefig('cohort_diff.tif',format='tif',dpi=1200)
+fig_diff_overall.savefig('cohort_diff_sel.tif',format='tif',dpi=1200)
+

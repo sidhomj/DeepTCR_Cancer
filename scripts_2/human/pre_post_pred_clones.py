@@ -102,14 +102,17 @@ df_post['freq'] = DTCR.freq
 df_post['ID'] = df_post['sample'].map(post_dict)
 df_post['seq_id'] = df_post['beta'] + '_' + df_post['ID'].astype(str)
 
-thresh = 0.001
+thresh = None
 
 #crpr
 plot_pre_post(df_pre,df_post,label='crpr',cut_pre=cut_top_pre,cut_post=cut_top_post,thresh=thresh)
-plt.title('CRPR')
+plt.title('CRPR',fontsize=24)
+plt.savefig('pre_post_clones_crpr.png',dpi=1200)
 
 #sdpd
 plot_pre_post(df_pre,df_post,label='sdpd',cut_pre=cut_bottom_pre,cut_post=cut_bottom_post,thresh=thresh)
-plt.title('SDPD')
+plt.title('SDPD',fontsize=24)
+plt.savefig('pre_post_clones_sdpd.png',dpi=1200)
+
 
 

@@ -42,3 +42,9 @@ model_names = ['TCR','HLA','TCR+HLA']
 for m,n in zip(models,model_names):
     df_model = pd.read_csv(m)
     create_figure(df_model,n)
+
+m = models[2]
+n = model_names[2]
+df_model = pd.read_csv(m)
+create_figure(df_model,n)
+plt.savefig(n+'_auc.eps')

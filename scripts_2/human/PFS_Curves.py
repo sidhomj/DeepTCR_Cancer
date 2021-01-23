@@ -6,7 +6,7 @@ import pandas as pd
 from lifelines import KaplanMeierFitter
 from lifelines.statistics import logrank_test
 
-df = pd.read_csv('CM038_BM.csv')
+df = pd.read_csv('CM038_BM2.csv')
 
 kmf = KaplanMeierFitter()
 idx = df['DeepTCR'] >= np.median(df['DeepTCR'])
@@ -30,3 +30,4 @@ leg = ax.legend(handles, labels,title='Likelihood of Response',frameon=False,fon
 leg.get_title().set_fontsize('12')
 leg._legend_box.align = "left"
 plt.show()
+plt.savefig('pfs.eps')

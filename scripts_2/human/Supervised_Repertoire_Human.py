@@ -16,9 +16,9 @@ df_tcr = pd.read_csv('sample_tcr.csv')
 df_hla = pd.read_csv('sample_hla.csv')
 df_tcr_hla = pd.read_csv('sample_tcr_hla.csv')
 
-df_tcr = pd.read_csv('sample_tcr_inf.csv')
-df_hla = pd.read_csv('sample_hla_inf.csv')
-df_tcr_hla = pd.read_csv('sample_tcr_hla_inf.csv')
+# df_tcr = pd.read_csv('sample_tcr_inf.csv')
+# df_hla = pd.read_csv('sample_hla_inf.csv')
+# df_tcr_hla = pd.read_csv('sample_tcr_hla_inf.csv')
 
 #Concat Data
 df = pd.DataFrame()
@@ -50,8 +50,8 @@ df_bootstrap['auc'] = auc_list
 f, ax1 = plt.subplots()
 ax1.set_xlim([0.0, 1.0])
 ax1.set_ylim([0.0, 1.05])
-ax1.set_xlabel('False Positive Rate')
-ax1.set_ylabel('True Positive Rate')
+ax1.set_xlabel('False Positive Rate',fontsize=18)
+ax1.set_ylabel('True Positive Rate',fontsize=18)
 for m in models:
     roc_score = roc_auc_score(df['Label'], df[m])
     fpr, tpr, th = roc_curve(df['Label'], df[m])
@@ -64,6 +64,7 @@ ax2.spines['right'].set_visible(False)
 ax2.spines['top'].set_visible(False)
 sns.violinplot(data=df_bootstrap,x='model',y='auc',ax=ax2,cut=0)
 ax2.set_xlabel('')
+plt.savefig('human_roc.eps')
 
 #Get P-Values
 df_pval = pd.DataFrame()

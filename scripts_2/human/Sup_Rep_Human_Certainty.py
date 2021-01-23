@@ -49,4 +49,4 @@ ranksums(model_info['TCR+HLA']['mean']['90 CI'], model_info['HLA']['mean']['90 C
 ranksums(model_info['TCR+HLA']['mean']['90 CI'], model_info['TCR']['mean']['90 CI'])
 ranksums(model_info['TCR']['mean']['90 CI'], model_info['HLA']['mean']['90 CI'])
 
-check=1
+plt.savefig('certainty.eps')

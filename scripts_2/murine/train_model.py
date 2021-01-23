@@ -34,8 +34,8 @@ with open('sample_preds.pkl','wb') as f:
 plt.figure()
 plt.xlim([0.0, 1.0])
 plt.ylim([0.0, 1.05])
-plt.xlabel('False Positive Rate')
-plt.ylabel('True Positive Rate')
+plt.xlabel('False Positive Rate',fontsize=18)
+plt.ylabel('True Positive Rate',fontsize=18)
 
 classes = DTCR_WF.lb.classes_
 color_dict = {'Control':'limegreen','9H10':'red','RT':'darkorange','Combo':'magenta'}

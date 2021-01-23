@@ -42,9 +42,9 @@ color_dict = {'Control':'limegreen','9H10':'red','RT':'darkorange','Combo':'mage
 for ii,c in enumerate(classes,0):
     roc_score = roc_auc_score(DTCR_WF.y_test[:,ii], DTCR_WF.y_pred[:,ii])
     fpr, tpr, _ = roc_curve(DTCR_WF.y_test[:,ii], DTCR_WF.y_pred[:,ii])
-    plt.plot(fpr, tpr, lw=2, label='Rep. %s (area = %0.4f)' % (c, roc_score),c=color_dict[c])
+    plt.plot(fpr, tpr, lw=3, label='%s (area = %0.3f)' % (c, roc_score),c=color_dict[c])
 
-plt.legend(loc="lower right")
+plt.legend(loc="lower right",prop={'size':16},frameon=False)
 plt.savefig('Rudqvist_AUC.eps')
 
 import pandas as pd

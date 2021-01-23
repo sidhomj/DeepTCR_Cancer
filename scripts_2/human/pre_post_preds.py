@@ -5,8 +5,8 @@ import matplotlib.pyplot as plt
 from sklearn.metrics import roc_auc_score,roc_curve
 
 model = 'TCR'
-# model = 'HLA'
-# model = 'TCR+HLA'
+model = 'HLA'
+model = 'TCR+HLA'
 if model == 'TCR':
     file_base = 'sample_tcr'
 elif model =='HLA':
@@ -25,6 +25,10 @@ df_master = pd.read_csv('Master_Beta.csv')
 df_master.dropna(subset=['Post_Sample'],inplace=True)
 post_dict = dict(zip(df_master['Post_Sample'],df_master['ID']))
 df_post['sample'] = df_post['Samples'].map(post_dict)
+
+intersect = np.intersect1d(df_pre['sample'],df_post['sample'])
+df_pre = df_pre[df_pre['sample'].isin(intersect)]
+df_post = df_post[df_post['sample'].isin(intersect)]
 
 #bootsrap AUC's
 n_boots=5000

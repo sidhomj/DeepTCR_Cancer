@@ -82,22 +82,22 @@ df_plot['pred'] = predicted[:,0]
 df_plot['gt'] = DTCR.class_id
 df_plot['freq'] = DTCR.freq
 
-plt.figure()
-ax = sns.distplot(df_plot['pred'],1000,color='k',kde=False)
-N,bins= np.histogram(df_plot['pred'],1000)
-for p,b in zip(ax.patches,bins):
-    if b < cut_bottom:
-        p.set_facecolor('r')
-    elif b > cut_top:
-        p.set_facecolor('b')
-y_min,y_max = plt.ylim()
-plt.xlim([0,1])
-plt.xticks(np.arange(0.0,1.1,0.1))
-plt.yticks([])
-plt.xlabel('')
-plt.ylabel('')
-plt.show()
-plt.savefig('pred_hist.tif',dpi=1200)
+# plt.figure()
+# ax = sns.distplot(df_plot['pred'],1000,color='k',kde=False)
+# N,bins= np.histogram(df_plot['pred'],1000)
+# for p,b in zip(ax.patches,bins):
+#     if b < cut_bottom:
+#         p.set_facecolor('r')
+#     elif b > cut_top:
+#         p.set_facecolor('b')
+# y_min,y_max = plt.ylim()
+# plt.xlim([0,1])
+# plt.xticks(np.arange(0.0,1.1,0.1))
+# plt.yticks([])
+# plt.xlabel('')
+# plt.ylabel('')
+# plt.show()
+# plt.savefig('pred_hist.tif',dpi=1200)
 
 beta_sequences = DTCR.beta_sequences
 v_beta = DTCR.v_beta
@@ -141,13 +141,13 @@ s = pd.read_csv('sample_tcr_hla.csv')
 s = s.groupby(['Samples']).agg({'y_pred':'mean','y_test':'mean'}).reset_index()
 s.rename(columns={'y_pred': 'preds','Samples':'sample'}, inplace=True)
 
-#select for 35 samples with matched pre/post
-df_master = pd.read_csv('Master_Beta.csv')
-df_master.dropna(subset=['Pre_Sample','Post_Sample'],inplace=True)
-sample_dict = dict(zip(df_master['Pre_Sample'],df_master['ID'].astype(str)))
-s['ID'] = s['sample'].map(sample_dict)
-s['sample'].isin(df_master['Pre_Sample'])
-s = s[s['sample'].isin(df_master['Pre_Sample'])]
+# #select for 35 samples with matched pre/post
+# df_master = pd.read_csv('Master_Beta.csv')
+# df_master.dropna(subset=['Pre_Sample','Post_Sample'],inplace=True)
+# sample_dict = dict(zip(df_master['Pre_Sample'],df_master['ID'].astype(str)))
+# s['ID'] = s['sample'].map(sample_dict)
+# s['sample'].isin(df_master['Pre_Sample'])
+# s = s[s['sample'].isin(df_master['Pre_Sample'])]
 
 s['sample'] = s['sample'].str.replace('_TCRB.tsv', '')
 s['Response_cat'] = None
@@ -193,6 +193,8 @@ for i in range(H['h'].shape[2]):
 plt.gcf().set_size_inches(13, 5.5)
 plt.tight_layout()
 fig_sample_density.savefig('sample_density.tif',format='tif',dpi=1200)
+fig_sample_density.savefig('sample_density.png',dpi=1200)
+
 
 fig_crpr, ax_crpr = plt.subplots()
 ax_crpr.cla()

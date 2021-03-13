@@ -1,7 +1,4 @@
-"""Figure 3B"""
-
-"""This script is used to train both the sequence and repertoire classifier on the
-Rudqvist_2017 dataset and compare their performances."""
+"""Figure 1B"""
 
 from DeepTCR.DeepTCR import DeepTCR_SS, DeepTCR_WF
 from sklearn.metrics import roc_curve, roc_auc_score
@@ -30,7 +27,7 @@ DTCR_WF.Monte_Carlo_CrossVal(folds=folds,LOO=LOO,epochs_min=epochs_min,num_conce
 with open('sample_preds.pkl','wb') as f:
     pickle.dump(DTCR_WF.DFs_pred,f)
 
-#Create plot to compare SS/WF performance
+#Create plot
 plt.figure()
 plt.xlim([0.0, 1.0])
 plt.ylim([0.0, 1.05])

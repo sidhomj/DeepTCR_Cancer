@@ -1,3 +1,5 @@
+"""Figure 1D"""
+
 from DeepTCR.DeepTCR import DeepTCR_SS, DeepTCR_WF, DeepTCR_U
 from sklearn.metrics import roc_curve, roc_auc_score
 import numpy as np

@@ -1,6 +1,7 @@
 from DeepTCR.DeepTCR import DeepTCR_WF
 import pandas as pd
 import numpy as np
+from DeepTCR.functions.data_processing import supertype_conv_op
 def process_gene(gene,chain,df_merge):
     temp = df_merge['TR'+chain+gene+'_1'].str.split('TR'+chain+gene,expand=True)[1].str.split('-',expand=True)
     temp.fillna(value=1,inplace=True)
@@ -24,7 +25,9 @@ v_beta = np.array(df_merge['TRBV_1'])
 d_beta = np.array(df_merge['TRBD_1'])
 j_beta = np.array(df_merge['TRBJ_1'])
 hla = np.array(df_merge[['0','1','2','3','4','5']])
+hla = np.array(supertype_conv_op(hla))
 DTCR = DeepTCR_WF('../human/HLA_TCR')
 out = DTCR.Sample_Inference(beta_sequences=beta_sequences,v_beta=v_beta,d_beta=d_beta,j_beta=j_beta,hla=hla)
+                            # models=['model_'+str(x) for x in range(10)])
 df_merge['pred'] = out[:,0]
 df_merge.to_csv('tcrs_scored.csv',index=False)

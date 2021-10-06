@@ -24,8 +24,11 @@ df_antigen_type.reset_index(drop=True,inplace=True)
 df_antigen_type['antigen_category'][df_antigen_type['antigen_category'] == 'Multi'] = 'NeoAg'
 
 df_merge = pd.merge(df_scores,df_antigen_type,on='TCR clonotype family')
-sns.boxplot(data=df_merge,x='antigen_category',y='pred',
-            order = list(df_merge.groupby(['antigen_category']).mean()['pred'].sort_values().index))
+# sns.boxplot(data=df_merge,x='antigen_category',y='pred',
+#             order = list(df_merge.groupby(['antigen_category']).mean()['pred'].sort_values().index))
+sns.violinplot(data=df_merge,x='antigen_category',y='pred',
+            order = list(df_merge.groupby(['antigen_category']).mean()['pred'].sort_values().index),
+               cut=0)
 
 
 df_antigen_type = df_spec
@@ -36,5 +39,25 @@ df_antigen_type.reset_index(drop=True,inplace=True)
 df_merge = pd.merge(df_scores,df_antigen_type,on='TCR clonotype family')
 sns.boxplot(data=df_merge,x='antigen_category',y='pred',
             order = list(df_merge.groupby(['antigen_category']).mean()['pred'].sort_values().index))
+sns.violinplot(data=df_merge,x='antigen_category',y='pred',
+            order = list(df_merge.groupby(['antigen_category']).mean()['pred'].sort_values().index),
+            cut=0)
 
 df_merge['CDR3B_1'].value_counts()
+
+# lab = 'norm TCR activation'
+# df_antigen_avidity = df_antigen[df_antigen['variable']==lab]
+# df_antigen_avidity.dropna(inplace=True)
+# df_antigen_avidity = df_antigen_avidity[['TCR clonotype family','value']]
+# df_antigen_avidity.rename(columns={'value':lab},inplace=True)
+# df_antigen_avidity.reset_index(drop=True,inplace=True)
+# df_merge = pd.merge(df_scores,df_antigen_avidity,on='TCR clonotype family')
+# # sns.boxplot(data=df_merge,x='antigen_category',y='pred',
+# #             order = list(df_merge.groupby(['antigen_category']).mean()['pred'].sort_values().index))
+# sns.violinplot(data=df_merge,x='antigen_category',y='pred',
+#             order = list(df_merge.groupby(['antigen_category']).mean()['pred'].sort_values().index),
+#                cut=0)
+# sns.scatterplot(data=df_merge,x=lab,y='pred')
+# from scipy.stats import spearmanr
+# spearmanr(df_merge[lab],df_merge['pred'])
+#

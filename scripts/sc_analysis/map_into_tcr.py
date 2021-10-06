@@ -1,0 +1,275 @@
+"""
+Figure 2c-f, Supplementary Figure 6
+"""
+
+"""This script is used to provide a descriptive analysis of the distribution of TCR sequences
+within the CheckMate-038 clinical trial.
+"""
+
+import pickle
+import numpy as np
+import pandas as pd
+import umap
+from DeepTCR.DeepTCR import DeepTCR_WF,DeepTCR_U
+import matplotlib.pyplot as plt
+import os
+import seaborn as sns
+from scipy.stats import gaussian_kde
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+from scipy.stats import fisher_exact, ranksums, spearmanr
+from sklearn.model_selection import StratifiedShuffleSplit
+import umap
+from scipy import ndimage as ndi
+from matplotlib.patches import Circle
+import pickle
+def histogram_2d_cohort(d, w, grid_size):
+    # center of data
+    d_center = np.mean(np.concatenate(d, axis=0), axis=0)
+    # largest radius
+    d_radius = np.max(np.sum((d_center[np.newaxis, :] - np.concatenate(d, axis=0)) ** 2, axis=1) ** (1 / 2))
+    # padding factors
+    d_pad = 1.2
+    c_pad = 0.9
+
+    # set step and edges of bins for 2d hist
+    x_edges = np.linspace(d_center[0] - (d_radius * d_pad), d_center[0] + (d_radius + d_pad), grid_size + 1)
+    y_edges = np.linspace(d_center[1] - (d_radius * d_pad), d_center[1] + (d_radius + d_pad), grid_size + 1)
+    X, Y = np.meshgrid(x_edges[:-1] + (np.diff(x_edges) / 2), y_edges[:-1] + (np.diff(y_edges) / 2))
+
+    # construct 2d smoothed histograms for each element in lists d and w
+    h = np.stack([np.histogramdd(_d, bins=[x_edges, y_edges], weights=_w)[0] for _d, _w in zip(d, w)], axis=2)
+
+    return dict(h=h, X=X, Y=Y, c=dict(center=d_center, radius=d_radius * d_pad * c_pad))
+def hist2d_denisty_plot(h, X, Y, ax, log_transform=False, gaussian_sigma=-1, normalize=True, cmap=None, vmax=None, vsym=False):
+    D = h
+    if log_transform:
+        D = np.log(h + 1)
+    if gaussian_sigma > 0:
+        D = ndi.gaussian_filter(D, gaussian_sigma)
+    if normalize:
+        D /= np.sum(D)
+
+    if cmap is None:
+        cmap = plt.get_cmap('viridis')
+
+    ax.cla()
+    ax.pcolormesh(X, Y, D, shading='gouraud', cmap=cmap, vmin=-vmax if (vsym == True) & (vmax is not None) else None, vmax=vmax)
+    ax.set(xticks=[], yticks=[], frame_on=False)
+
+
+os.environ["CUDA DEVICE ORDER"] = 'PCI_BUS_ID'
+os.environ["CUDA_VISIBLE_DEVICES"] = "6"
+
+DTCR = DeepTCR_WF('Human_TIL')
+DTCR.Get_Data(directory='../../Data',Load_Prev_Data=False,
+               aa_column_beta=1,count_column=2,v_beta_column=7,d_beta_column=14,j_beta_column=21,data_cut=1.0,
+              hla='../../Data/HLA_Ref_sup_AB.csv')
+
+with open('../human/cm038_ft_pred.pkl','rb') as f:
+    features,predicted = pickle.load(f)
+
+win = 10
+cut_bottom = np.percentile(predicted[:,0],win)
+cut_top = np.percentile(predicted[:,0],100-win)
+
+df_plot = pd.DataFrame()
+df_plot['beta'] = DTCR.beta_sequences
+df_plot['sample'] = DTCR.sample_id
+df_plot['pred'] = predicted[:,0]
+df_plot['gt'] = DTCR.class_id
+df_plot['freq'] = DTCR.freq
+
+# plt.figure()
+# ax = sns.distplot(df_plot['pred'],1000,color='k',kde=False)
+# N,bins= np.histogram(df_plot['pred'],1000)
+# for p,b in zip(ax.patches,bins):
+#     if b < cut_bottom:
+#         p.set_facecolor('r')
+#     elif b > cut_top:
+#         p.set_facecolor('b')
+# y_min,y_max = plt.ylim()
+# plt.xlim([0,1])
+# plt.xticks(np.arange(0.0,1.1,0.1))
+# plt.yticks([])
+# plt.xlabel('')
+# plt.ylabel('')
+# plt.show()
+# plt.savefig('pred_hist.tif',dpi=1200)
+
+beta_sequences = DTCR.beta_sequences
+v_beta = DTCR.v_beta
+j_beta = DTCR.j_beta
+d_beta = DTCR.d_beta
+hla = DTCR.hla_data_seq
+sample_id = DTCR.sample_id
+
+file = '../human/cm038_x2_u.pkl'
+featurize = False
+if featurize:
+    DTCR_U = DeepTCR_U('pre_vae', device=1)
+    DTCR_U.Load_Data(beta_sequences=beta_sequences, v_beta=v_beta, d_beta=d_beta, j_beta=j_beta, hla=hla)
+    DTCR_U.Train_VAE(Load_Prev_Data=False, latent_dim=128,stop_criterion=0.001,accuracy_min=0.98)
+    umap_obj = umap.UMAP()
+    X_2 = umap_obj.fit_transform(DTCR_U.features)
+    with open(file, 'wb') as f:
+        pickle.dump(X_2, f, protocol=4)
+    with open('umap_obj.pkl', 'wb') as f:
+        pickle.dump(umap_obj, f, protocol=4)
+else:
+    with open(file,'rb') as f:
+        X_2 = pickle.load(f)
+
+
+df_plot['x'] = X_2[:,0]
+df_plot['y'] = X_2[:,1]
+
+df_scores = pd.read_csv('tcrs_scored.csv')
+df_plot['present'] = df_plot['beta'].isin(df_scores['CDR3B_1'])
+df_plot = df_plot[df_plot['present']]
+label_dict = dict(zip(df_merge['CDR3B_1'],df_merge['antigen_category']))
+df_plot['category'] = df_plot['beta'].map(label_dict)
+df_plot.dropna(subset=['category'],inplace=True)
+df_merge = pd.perge(df_plot,)
+idx = df_plot['present']
+plt.scatter(df_plot['x'],df_plot['y'],s=5,c=df_plot['category'])
+sns.scatterplot(data=df_plot,x='x',y='y',hue='category')
+
+
+
+grid_size = 250
+gaussian_sigma = 1.25
+density_vmax = 0.0003
+diff_vmax = 0.0003
+
+d = df_plot
+d['file'] = d['sample']
+d['sample'] = d['sample'].str.replace('_TCRB.tsv', '')
+d['counts'] = d.groupby('sample')['freq'].transform(lambda x: x / x.min())
+
+s = pd.read_csv('sample_tcr_hla.csv')
+s = s.groupby(['Samples']).agg({'y_pred':'mean','y_test':'mean'}).reset_index()
+s.rename(columns={'y_pred': 'preds','Samples':'sample'}, inplace=True)
+
+# #select for 35 samples with matched pre/post
+# df_master = pd.read_csv('Master_Beta.csv')
+# df_master.dropna(subset=['Pre_Sample','Post_Sample'],inplace=True)
+# sample_dict = dict(zip(df_master['Pre_Sample'],df_master['ID'].astype(str)))
+# s['ID'] = s['sample'].map(sample_dict)
+# s['sample'].isin(df_master['Pre_Sample'])
+# s = s[s['sample'].isin(df_master['Pre_Sample'])]
+
+s['sample'] = s['sample'].str.replace('_TCRB.tsv', '')
+s['Response_cat'] = None
+s['Response_cat'][s['y_test']==1] = 'crpr'
+s['Response_cat'][s['y_test']==0] = 'sdpd'
+s.sort_values(by='preds',inplace=True)
+c_dict = dict(crpr='blue', sdpd='red')
+color_labels = [c_dict[_] for _ in s['Response_cat'].values]
+s.to_csv('order_samples_sel.csv',index=False)
+
+# s = pd.read_csv('CM038_BM2.csv')
+# s.rename(columns={'DeepTCR': 'preds'}, inplace=True)
+# s = s.sort_values('preds')
+# c_dict = dict(crpr='blue', sdpd='red')
+# color_labels = [c_dict[_] for _ in s['Response_cat'].values]
+
+cmap_blue = plt.get_cmap('Blues')
+cmap_blue(0)
+cmap_blue._lut[0] = np.ones(4)
+cmap_blue._lut[256] = np.ones(4)
+cmap_red = plt.get_cmap('Reds')
+cmap_red(0)
+cmap_red._lut[0] = np.ones(4)
+cmap_red._lut[256] = np.ones(4)
+map_dict = dict(crpr=cmap_blue, sdpd=cmap_red)
+map_labels = [map_dict[_] for _ in s['Response_cat'].values]
+
+# cmap = plt.get_cmap('viridis')
+# cmap = plt.get_cmap('YlGnBu')
+# cmap(0)
+# cmap._lut = cmap._lut[np.concatenate([np.flip(np.arange(256)), [257, 256, 258]])]
+# cmap._lut[[0, 256]] = np.ones(4)
+H = histogram_2d_cohort([d.loc[d['sample'] == i, ['y', 'x']].values for i in s['sample'].values], [d.loc[d['sample'] == i, 'counts'].values for i in s['sample'].values], grid_size)
+
+
+fig_sample_density, ax = plt.subplots(nrows=4, ncols=11)
+ax_supp_density = ax.flatten()
+for i in range(H['h'].shape[2]):
+    hist2d_denisty_plot(H['h'][:, :, i], H['X'], H['Y'], ax_supp_density[i], log_transform=True, gaussian_sigma=gaussian_sigma, cmap=map_labels[i], vmax=density_vmax)
+    ax_supp_density[i].add_artist(Circle(H['c']['center'], H['c']['radius'], color=color_labels[i], lw=3, fill=False))
+    ax_supp_density[i].set_title('%.3f' % s['preds'].iloc[i], fontsize=18)
+[ax_supp_density[i].set(xticks=[], yticks=[], frame_on=False) for i in range(H['h'].shape[-1], len(ax_supp_density))]
+plt.gcf().set_size_inches(13, 5.5)
+plt.tight_layout()
+fig_sample_density.savefig('sample_density.tif',format='tif',dpi=1200)
+fig_sample_density.savefig('sample_density.png',dpi=1200)
+
+
+fig_crpr, ax_crpr = plt.subplots()
+ax_crpr.cla()
+D = H['h'][:, :, s['Response_cat'] == 'crpr']
+D = np.log(D + 1)
+D = np.stack([ndi.gaussian_filter(D[:, :, i], sigma=gaussian_sigma) for i in range(D.shape[2])], axis=2)
+D /= D.sum(axis=0).sum(axis=0)[np.newaxis, np.newaxis, :]
+D = np.mean(D, axis=2)
+ax_crpr.pcolormesh(H['X'], H['Y'], D, cmap=cmap_blue, shading='gouraud', vmin=0, vmax=density_vmax)
+ax_crpr.set(xticks=[], yticks=[], frame_on=False)
+ax_crpr.add_artist(Circle(H['c']['center'], H['c']['radius'], color='blue', lw=5, fill=False))
+plt.gcf().set_size_inches(5, 5)
+plt.tight_layout()
+fig_crpr.savefig('crpr.tif',format='tif',dpi=1200)
+
+
+fig_sdpd, ax_crpr = plt.subplots()
+ax_crpr.cla()
+D = H['h'][:, :, s['Response_cat'] == 'sdpd']
+D = np.log(D + 1)
+D = np.stack([ndi.gaussian_filter(D[:, :, i], sigma=gaussian_sigma) for i in range(D.shape[2])], axis=2)
+D /= D.sum(axis=0).sum(axis=0)[np.newaxis, np.newaxis, :]
+D = np.mean(D, axis=2)
+ax_crpr.pcolormesh(H['X'], H['Y'], D, cmap=cmap_red, shading='gouraud', vmin=0, vmax=density_vmax)
+ax_crpr.set(xticks=[], yticks=[], frame_on=False)
+ax_crpr.add_artist(Circle(H['c']['center'], H['c']['radius'], color='red', lw=5, fill=False))
+plt.gcf().set_size_inches(5, 5)
+plt.tight_layout()
+fig_sdpd.savefig('sdpd.tif',format='tif',dpi=1200)
+
+
+fig_sample_diff, ax = plt.subplots(nrows=4, ncols=11)
+ax_diff_sample = ax.flatten()
+
+qs = np.quantile(d['pred'].values, [0.1, 0.9])
+Ha = histogram_2d_cohort([d.loc[d['sample'] == i, ['y', 'x']].values for i in s['sample'].values],
+                         [d.loc[d['sample'] == i, 'counts'].values * (d.loc[d['sample'] == i, 'pred'].values > qs[1]) for i in s['sample'].values],
+                         grid_size=grid_size)
+Hb = histogram_2d_cohort([d.loc[d['sample'] == i, ['y', 'x']].values for i in s['sample'].values],
+                         [d.loc[d['sample'] == i, 'counts'].values * (d.loc[d['sample'] == i, 'pred'].values < qs[0]) for i in s['sample'].values],
+                         grid_size=grid_size)
+
+D = np.stack([Ha['h'], Hb['h']], axis=3)
+D = np.log(D + 1)
+D = np.stack([np.stack([ndi.gaussian_filter(D[:, :, i, j], sigma=gaussian_sigma) for i in range(D.shape[2])], axis=2) for j in range(D.shape[3])], axis=3)
+D = (D[:, :, :, 1] - D[:, :, :, 0]) / D.sum(axis=0).sum(axis=0).sum(axis=1)[np.newaxis, np.newaxis, :]
+
+for i in range(D.shape[2]):
+    hist2d_denisty_plot(D[:, :, i], Ha['X'], Ha['Y'], ax_diff_sample[i], cmap='bwr', vmax=diff_vmax, vsym=True, normalize=False)
+    ax_diff_sample[i].add_artist(Circle(H['c']['center'], H['c']['radius'], color=color_labels[i], lw=3, fill=False))
+    ax_diff_sample[i].set_title('%.3f' % s['preds'].iloc[i], fontsize=18)
+[ax_diff_sample[i].set(xticks=[], yticks=[], frame_on=False) for i in range(D.shape[2], len(ax_diff_sample))]
+plt.gcf().set_size_inches(13, 5.5)
+plt.tight_layout()
+fig_sample_diff.savefig('sample_diff.tif',format='tif',dpi=1200)
+fig_sample_diff.savefig('sample_diff_sel.tif',format='tif',dpi=1200)
+
+
+fig_diff_overall, ax_diff_overall = plt.subplots()
+hist2d_denisty_plot(np.mean(D, axis=2), Ha['X'], Ha['Y'], ax_diff_overall, cmap='bwr', vmax=diff_vmax, vsym=True, normalize=False)
+ax_diff_overall.add_artist(Circle(H['c']['center'], H['c']['radius'], color='grey', lw=5, fill=False))
+plt.gcf().set_size_inches(5, 5)
+plt.tight_layout()
+fig_diff_overall.savefig('cohort_diff.tif',format='tif',dpi=1200)
+fig_diff_overall.savefig('cohort_diff_sel.tif',format='tif',dpi=1200)
+

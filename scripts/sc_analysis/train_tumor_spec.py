@@ -28,8 +28,10 @@ j_alpha = np.array(df_merge['TRAJ_1'])
 class_labels = np.array(df_merge['label'])
 
 DTCR = DeepTCR_SS('tumor_s')
+# DTCR.Load_Data(beta_sequences=beta_sequences,v_beta=v_beta,j_beta=j_beta,
+#                alpha_sequences=alpha_sequences,v_alpha=v_alpha,j_alpha=j_alpha,
+#                class_labels=class_labels)
 DTCR.Load_Data(beta_sequences=beta_sequences,v_beta=v_beta,j_beta=j_beta,
-               alpha_sequences=alpha_sequences,v_alpha=v_alpha,j_alpha=j_alpha,
                class_labels=class_labels)
 DTCR.Monte_Carlo_CrossVal(folds=100)
 DTCR.Representative_Sequences(make_seq_logos=False,top_seq=50)

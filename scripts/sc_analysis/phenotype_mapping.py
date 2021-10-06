@@ -37,8 +37,8 @@ df_corr.dropna(inplace=True)
 
 gs = GSEA()
 # gs.Load_Gene_Sets(['c2.cp.biocarta.v7.4.symbols.gmt'])
-gs.Load_Gene_Sets([os.listdir('../../my_gsea/gene_sets')[4]])
-# gs.Run(np.array(df_corr['gene']),np.array(df_corr['corr']))
+gs_list = os.listdir('../../my_gsea/gene_sets')
+gs.Load_Gene_Sets([gs_list[12]])
 gs.Run_parallel(np.array(df_corr['gene']),np.array(df_corr['corr']),num_workers=8)
 gs.Vis(gs.enr_results['Term'].iloc[0])
 

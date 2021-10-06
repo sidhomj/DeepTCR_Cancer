@@ -26,3 +26,5 @@ j_beta = np.array(df_merge['TRBJ_1'])
 hla = np.array(df_merge[['0','1','2','3','4','5']])
 DTCR = DeepTCR_WF('../human/HLA_TCR')
 out = DTCR.Sample_Inference(beta_sequences=beta_sequences,v_beta=v_beta,d_beta=d_beta,j_beta=j_beta,hla=hla)
+df_merge['pred'] = out[:,0]
+df_merge.to_csv('tcrs_scored.csv',index=False)

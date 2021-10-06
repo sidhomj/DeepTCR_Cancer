@@ -12,7 +12,7 @@ os.environ["CUDA DEVICE ORDER"] = 'PCI_BUS_ID'
 os.environ["CUDA_VISIBLE_DEVICES"] = str(gpu)
 
 DTCR = DeepTCR_WF('load')
-DTCR.Get_Data(directory='../../Data_Post',Load_Prev_Data=False,
+DTCR.Get_Data(directory='../../Data_Post',Load_Prev_Data=True,
                aa_column_beta=1,count_column=2,v_beta_column=7,d_beta_column=14,j_beta_column=21,data_cut=1.0,
               hla='../../Data_Post/HLA_Ref_sup_AB.csv')
 beta_sequences = DTCR.beta_sequences

@@ -55,7 +55,7 @@ folds = 100
 DTCR.Monte_Carlo_CrossVal(folds=folds)
 DTCR.Representative_Sequences(make_seq_logos=False,top_seq=50)
 DTCR.AUC_Curve()
-class_sel = 'MAA'
+class_sel = 'Viral'
 DTCR.Residue_Sensitivity_Logo(beta_sequences=np.array(DTCR.Rep_Seq[class_sel]['beta'])[0:25],
                               alpha_sequences=np.array(DTCR.Rep_Seq[class_sel]['alpha'])[0:25],
                               class_sel=class_sel,models=['model_'+str(x) for x in np.random.choice(range(folds),10)],

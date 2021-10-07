@@ -24,6 +24,12 @@ df_scores.rename(columns={'final.clonotype.family':'TCR clonotype family'},inpla
 df_scores.dropna(subset=['CDR3A_1'],inplace=True)
 df_scores['clusters']=df_scores['clusters'].astype('str')
 df_merge = df_scores
+count = df_merge.groupby(['CDR3B_1','CDR3A_1']).agg({'clusters':len})
+count = count[count['clusters']==1]
+count.reset_index(inplace=True)
+ref = np.array(count['CDR3B_1']+'_'+count['CDR3A_1'])
+df_merge = df_merge[(df_merge['CDR3B_1'] + '_' + df_merge['CDR3A_1']).isin(ref)]
+
 beta_sequences = np.array(df_merge['CDR3B_1'])
 v_beta = np.array(df_merge['TRBV_1'])
 d_beta = np.array(df_merge['TRBD_1'])

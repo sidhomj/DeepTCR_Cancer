@@ -20,6 +20,9 @@ df_merge = pd.merge(df_scores,df,on='TCR clonotype family')
 sns.violinplot(data=df_merge,x='label',y='pred',
             order = list(df_merge.groupby(['label']).mean()['pred'].sort_values().index),
             cut=0)
+plt.ylabel('P(Response)',fontsize=24)
+plt.xticks(fontsize=16)
+plt.xlabel(None)
 
 df = pd.read_csv('../../SC/antigen.csv')
 df = pd.melt(df,id_vars=[df.columns[0]],
@@ -36,6 +39,9 @@ df_merge = pd.merge(df_scores,df,on='TCR clonotype family')
 sns.violinplot(data=df_merge,x='label',y='pred',
             order = list(df_merge.groupby(['label']).mean()['pred'].sort_values().index),
                cut=0)
+plt.ylabel('P(Response)',fontsize=24)
+plt.xticks(fontsize=16)
+plt.xlabel(None)
 
 df_umap = pd.read_csv('../../SC/umap.csv')
 df_umap.rename(columns={'Unnamed: 0':'cell.barcode 2'},inplace=True)

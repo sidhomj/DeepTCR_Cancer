@@ -19,7 +19,7 @@ df_label = df_label[['TCR clonotype family','label']]
 
 df_merge = pd.merge(df_scores,df_label,on='TCR clonotype family')
 df_merge.drop_duplicates(subset=['TCR clonotype family','CDR3B_1','TRBV_1','TRBD_1','TRBJ_1'],inplace=True)
-df_merge = df_merge[df_merge['patient'] == 'p2']
+# df_merge = df_merge[df_merge['patient'] == 'p2']
 
 beta_sequences = np.array(df_merge['CDR3B_1'])
 v_beta = np.array(df_merge['TRBV_1'])
@@ -37,6 +37,7 @@ DTCR.Load_Data(beta_sequences=beta_sequences,v_beta=v_beta,j_beta=j_beta,
                alpha_sequences=alpha_sequences,v_alpha=v_alpha,j_alpha=j_alpha,
                hla=hla,
                class_labels=class_labels)
+DTCR.use_hla = False
 DTCR.Monte_Carlo_CrossVal(folds=100)
 DTCR.Representative_Sequences(make_seq_logos=False,top_seq=50)
 DTCR.AUC_Curve()

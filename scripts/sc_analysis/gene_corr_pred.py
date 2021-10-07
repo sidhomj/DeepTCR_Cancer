@@ -31,7 +31,8 @@ for ii,g in enumerate(data.columns,0):
 df_corr = pd.DataFrame()
 df_corr['gene'] = data.columns
 df_corr['corr']= corr
-df_corr.sort_values(by='corr',ascending=True,inplace=True)
+# df_corr['corr'] = -df_corr['corr']
+df_corr.sort_values(by='corr',ascending=False,inplace=True)
 df_corr.dropna(inplace=True)
 
 gs = GSEA()

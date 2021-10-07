@@ -51,13 +51,15 @@ DTCR = DeepTCR_SS('tumor_s')
 DTCR.Load_Data(beta_sequences=beta_sequences,v_beta=v_beta,j_beta=j_beta,
                alpha_sequences=alpha_sequences,v_alpha=v_alpha,j_alpha=j_alpha,
                class_labels=class_labels)
-DTCR.Monte_Carlo_CrossVal(folds=100)
+folds = 100
+DTCR.Monte_Carlo_CrossVal(folds=folds)
 DTCR.Representative_Sequences(make_seq_logos=False,top_seq=50)
 DTCR.AUC_Curve()
-DTCR.Residue_Sensitivity_Logo(beta_sequences=np.array(DTCR.Rep_Seq['MAA']['beta'])[0:25],
-                              alpha_sequences=np.array(DTCR.Rep_Seq['MAA']['alpha'])[0:25],
-                              class_sel='MAA',models=['model_'+str(x) for x in np.random.choice(range(100),10)],
+class_sel = 'MAA'
+DTCR.Residue_Sensitivity_Logo(beta_sequences=np.array(DTCR.Rep_Seq[class_sel]['beta'])[0:25],
+                              alpha_sequences=np.array(DTCR.Rep_Seq[class_sel]['alpha'])[0:25],
+                              class_sel=class_sel,models=['model_'+str(x) for x in np.random.choice(range(folds),10)],
                               background_color='black',
-                              figsize=(3,8),
+                              figsize=(5,8),
                               Load_Prev_Data=False,
                               min_size=0.5)

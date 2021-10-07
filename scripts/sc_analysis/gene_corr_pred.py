@@ -11,11 +11,14 @@ from scipy.io import mmread
 df_scores = pd.read_csv('tcrs_scored.csv')
 df_scores['cell.barcode'] = df_scores['patient']+'_'+ df_scores['cell.barcode'].str.split('_',expand=True)[1]
 
-data = mmread('../../SC/data_all.mtx')
-data = data.T
-
-data.set_index('Unnamed: 0',inplace=True)
-data = data.T
+data = mmread('../../SC/data_all.mtx').T
+barcodes = pd.read_csv('../../SC/barcodes.csv')
+barcodes = np.array(barcodes.iloc[:,1])
+genes = pd.read_csv('../../SC/genes.csv')
+genes = np.array(genes.iloc[:,1])
+data = pd.DataFrame(data.todense())
+data.set_index(barcodes,inplace=True)
+data.columns = genes
 
 df_scores.set_index('cell.barcode',inplace=True)
 df_merge2 = pd.merge(data,df_scores,right_index=True,left_index=True)

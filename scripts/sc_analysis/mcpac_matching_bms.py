@@ -41,6 +41,7 @@ cat_dict['MAGE-1'] = 'MAGE'
 cat_dict['gp100'] = 'GP100'
 df_maa = df_maa.groupby(['CDR3.beta.aa']).agg({'Antigen.protein':'first','Epitope.peptide':'first'}).reset_index()
 df_maa['label'] = df_maa['Antigen.protein'].map(cat_dict)
+df_maa['label2'] = df_maa['label']
 # df_maa['label'] = 'MAA'
 train_list.append(df_maa)
 
@@ -50,6 +51,7 @@ df_path = df_path[df_path['Pathology'].isin(path_sel)]
 df_path = df_path.groupby(['CDR3.beta.aa']).agg({'Antigen.protein':'first','Epitope.peptide':'first','Pathology':'first'}).reset_index()
 # df_path['label'] = 'Viral'
 df_path['label'] = df_path['Pathology']
+df_path['label2'] = 'Viral'
 train_list.append(df_path)
 
 df_train = pd.concat(train_list)
@@ -93,7 +95,10 @@ plt.xticks(rotation=90)
 plt.tight_layout()
 df_merge.sort_values(by='label',inplace=True)
 
-df_merge = df_merge[(df_merge['pred'] > 0.95) | (df_merge['pred']<0.1)]
+win = 10
+cut_bottom = np.percentile(predicted[:,0],win)
+cut_top = np.percentile(predicted[:,0],100-win)
+df_merge = df_merge[(df_merge['pred'] > cut_top) | (df_merge['pred']< cut_bottom)]
 
 #umap
 fig,ax = plt.subplots(1,len(order),figsize=(14,4))
@@ -105,4 +110,23 @@ for ii,l in enumerate(order):
     ax[ii].set_title(l)
     ax[ii].set_xticks([])
     ax[ii].set_yticks([])
+plt.tight_layout()
+
+plt.scatter(df_merge['x'],df_merge['y'])
+xlim = plt.xlim()
+ylim = plt.ylim()
+plt.close()
+
+order = ['Viral','Melan-A/MART-1']
+fig,ax = plt.subplots(1,len(order),figsize=(len(order)*4,4))
+for ii,l in enumerate(order):
+    df_plot = df_merge[df_merge['label2']==l]
+    x,y,c,_,_ = GKDE(np.array(df_plot['x']),np.array(df_plot['y']))
+    # x,y,c = np.array(df_plot['x']),np.array(df_plot['y']),df_plot['pred']
+    ax[ii].scatter(x,y,c=c,cmap='jet',s=25)
+    ax[ii].set_title(l)
+    ax[ii].set_xticks([])
+    ax[ii].set_yticks([])
+    ax[ii].set_xlim(xlim)
+    ax[ii].set_ylim(ylim)
 plt.tight_layout()

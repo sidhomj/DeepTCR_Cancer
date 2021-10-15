@@ -4,7 +4,7 @@ import pickle
 import pandas as pd
 import numpy as np
 
-DTCR_load = DeepTCR_WF('Human_TIL')
+DTCR_load = DeepTCR_WF('HLA_TCR')
 DTCR_load.Get_Data(directory='../../Data',Load_Prev_Data=True,
                aa_column_beta=1,count_column=2,v_beta_column=7,d_beta_column=14,j_beta_column=21,data_cut=1.0,
               hla='../../Data/HLA_Ref_sup_AB.csv')
@@ -29,9 +29,9 @@ DTCR.Residue_Sensitivity_Logo(beta_sequences=np.array(df['beta'].iloc[0:num_seq]
                               d_beta = np.array(df['d_beta'].iloc[0:num_seq]),
                               j_beta = np.array(df['j_beta'].iloc[0:num_seq]),
                               hla=np.array(df['hla'].iloc[0:num_seq]),
-                              models = ['model_'+str(x) for x in np.random.choice(range(100),1,replace=False)],
-                              figsize=(4,8),
+                              models = ['model_'+str(x) for x in np.random.choice(range(100),5,replace=False)],
+                              figsize=(3,8),
                               background_color='black',
                               class_sel = class_sel,
-                              min_size=0.5,
+                              min_size=0.25,
                               Load_Prev_Data=True)

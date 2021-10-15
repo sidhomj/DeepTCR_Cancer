@@ -61,8 +61,8 @@ pre_dict = dict(zip(df_sample['Pre_Sample'],df_sample['ID']))
 post_dict = dict(zip(df_sample['Post_Sample'],df_sample['ID']))
 
 
-DTCR = DeepTCR_WF('Human_TIL',device='/device:GPU:0')
-DTCR.Get_Data(directory='../../Data',Load_Prev_Data=False,
+DTCR = DeepTCR_WF('HLA_TCR')
+DTCR.Get_Data(directory='../../Data',Load_Prev_Data=True,
                aa_column_beta=1,count_column=2,v_beta_column=7,d_beta_column=14,j_beta_column=21,data_cut=1.0,
               hla='../../Data/HLA_Ref_sup_AB.csv')
 
@@ -84,7 +84,7 @@ df_pre['seq_id'] = df_pre['beta'] + '_' + df_pre['ID'].astype(str)
 
 
 DTCR = DeepTCR_WF('load')
-DTCR.Get_Data(directory='../../Data_Post',Load_Prev_Data=False,
+DTCR.Get_Data(directory='../../Data_Post',Load_Prev_Data=True,
                aa_column_beta=1,count_column=2,v_beta_column=7,d_beta_column=14,j_beta_column=21,data_cut=1.0,
               hla='../../Data_Post/HLA_Ref_sup_AB.csv')
 

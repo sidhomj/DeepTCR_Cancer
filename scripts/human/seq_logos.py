@@ -3,6 +3,7 @@ from DeepTCR.DeepTCR import DeepTCR_WF
 import pickle
 import pandas as pd
 import numpy as np
+import matplotlib.pyplot as plt
 
 DTCR_load = DeepTCR_WF('HLA_TCR')
 DTCR_load.Get_Data(directory='../../Data',Load_Prev_Data=True,
@@ -20,7 +21,7 @@ df['j_beta'] = DTCR_load.j_beta
 df['hla'] = DTCR_load.hla_data_seq
 df['crpr'] = predicted[:,0]
 df['sdpd'] = predicted[:,1]
-class_sel = 'crpr'
+class_sel = 'sdpd'
 df.sort_values(by=class_sel,ascending=False,inplace=True)
 DTCR = DeepTCR_WF('HLA_TCR')
 num_seq = 50
@@ -34,4 +35,5 @@ DTCR.Residue_Sensitivity_Logo(beta_sequences=np.array(df['beta'].iloc[0:num_seq]
                               background_color='black',
                               class_sel = class_sel,
                               min_size=0.25,
-                              Load_Prev_Data=True)
+                              Load_Prev_Data=False)
+plt.savefig(class_sel+'_rsl.png',dpi=600)

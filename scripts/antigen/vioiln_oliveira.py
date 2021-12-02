@@ -21,7 +21,7 @@ df_merge = df_merge[['CDR3B_1_x','CDR3B_1_y','pred_x','pred_y']]
 df_merge['diff'] = df_merge['pred_x']-df_merge['pred_y']
 df_merge.sort_values(by='diff',ascending=False,inplace=True)
 df_comp = pd.DataFrame()
-df_comp['1'] =
+# df_comp['1'] =
 
 df_scores.rename(columns={'final.clonotype.family':'TCR clonotype family'},inplace=True)
 

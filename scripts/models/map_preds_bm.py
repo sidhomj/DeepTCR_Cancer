@@ -1,5 +1,4 @@
 import pandas as pd
-import numpy as np
 
 df = pd.read_csv('../../Data/other/CM038_BM2.csv')
 df_preds = pd.read_csv('../models/sample_tcr_hla.csv')

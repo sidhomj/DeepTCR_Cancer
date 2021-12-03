@@ -63,12 +63,12 @@ def hist2d_denisty_plot(h, X, Y, ax, log_transform=False, gaussian_sigma=-1, nor
 os.environ["CUDA DEVICE ORDER"] = 'PCI_BUS_ID'
 os.environ["CUDA_VISIBLE_DEVICES"] = "6"
 
-DTCR = DeepTCR_WF('Human_TIL',device='/device:GPU:0')
-DTCR.Get_Data(directory='../../Data_Post',Load_Prev_Data=False,
+DTCR = DeepTCR_WF('../models/post')
+DTCR.Get_Data(directory='../../Data_Post',Load_Prev_Data=True,
                aa_column_beta=1,count_column=2,v_beta_column=7,d_beta_column=14,j_beta_column=21,data_cut=1.0,
               hla='../../Data_Post/HLA_Ref_sup_AB.csv')
 
-with open('cm038_ft_pred_inf.pkl','rb') as f:
+with open('../models/cm038_ft_pred_inf.pkl','rb') as f:
     features,predicted = pickle.load(f)
 
 sel_idx = np.where(np.sum(predicted,axis=1)!=0.0)[0]
@@ -136,7 +136,7 @@ d['file'] = d['sample']
 d['sample'] = d['sample'].str.replace('_TCRB.tsv', '')
 d['counts'] = d.groupby('sample')['freq'].transform(lambda x: x / x.min())
 
-s = pd.read_csv('sample_tcr_hla_inf.csv')
+s = pd.read_csv('../models/sample_tcr_hla_inf.csv')
 s = s.groupby(['Samples']).agg({'y_pred':'mean','y_test':'mean'}).reset_index()
 s.rename(columns={'y_pred': 'preds','Samples':'sample'}, inplace=True)
 df_master = pd.read_csv('Master_Beta.csv')

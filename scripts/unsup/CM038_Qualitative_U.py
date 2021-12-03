@@ -68,7 +68,7 @@ DTCR.Get_Data(directory='../../Data',Load_Prev_Data=True,
                aa_column_beta=1,count_column=2,v_beta_column=7,d_beta_column=14,j_beta_column=21,data_cut=1.0,
               hla='../../Data/HLA_Ref_sup_AB.csv')
 
-with open('cm038_ft_pred.pkl','rb') as f:
+with open('../models/cm038_ft_pred.pkl','rb') as f:
     features,predicted = pickle.load(f)
 
 win = 10
@@ -82,22 +82,22 @@ df_plot['pred'] = predicted[:,0]
 df_plot['gt'] = DTCR.class_id
 df_plot['freq'] = DTCR.freq
 
-# plt.figure()
-# ax = sns.distplot(df_plot['pred'],1000,color='k',kde=False)
-# N,bins= np.histogram(df_plot['pred'],1000)
-# for p,b in zip(ax.patches,bins):
-#     if b < cut_bottom:
-#         p.set_facecolor('r')
-#     elif b > cut_top:
-#         p.set_facecolor('b')
-# y_min,y_max = plt.ylim()
-# plt.xlim([0,1])
-# plt.xticks(np.arange(0.0,1.1,0.1))
-# plt.yticks([])
-# plt.xlabel('')
-# plt.ylabel('')
-# plt.show()
-# plt.savefig('pred_hist.tif',dpi=1200)
+plt.figure()
+ax = sns.distplot(df_plot['pred'],1000,color='k',kde=False)
+N,bins= np.histogram(df_plot['pred'],1000)
+for p,b in zip(ax.patches,bins):
+    if b < cut_bottom:
+        p.set_facecolor('r')
+    elif b > cut_top:
+        p.set_facecolor('b')
+y_min,y_max = plt.ylim()
+plt.xlim([0,1])
+plt.xticks(np.arange(0.0,1.1,0.1))
+plt.yticks([])
+plt.xlabel('')
+plt.ylabel('')
+plt.show()
+plt.savefig('pred_hist.png',dpi=1200)
 
 beta_sequences = DTCR.beta_sequences
 v_beta = DTCR.v_beta
@@ -137,7 +137,7 @@ d['file'] = d['sample']
 d['sample'] = d['sample'].str.replace('_TCRB.tsv', '')
 d['counts'] = d.groupby('sample')['freq'].transform(lambda x: x / x.min())
 
-s = pd.read_csv('sample_tcr_hla.csv')
+s = pd.read_csv('../models/sample_tcr_hla.csv')
 s = s.groupby(['Samples']).agg({'y_pred':'mean','y_test':'mean'}).reset_index()
 s.rename(columns={'y_pred': 'preds','Samples':'sample'}, inplace=True)
 
@@ -192,7 +192,7 @@ for i in range(H['h'].shape[2]):
 [ax_supp_density[i].set(xticks=[], yticks=[], frame_on=False) for i in range(H['h'].shape[-1], len(ax_supp_density))]
 plt.gcf().set_size_inches(13, 5.5)
 plt.tight_layout()
-fig_sample_density.savefig('sample_density.tif',format='tif',dpi=1200)
+# fig_sample_density.savefig('sample_density.tif',format='tif',dpi=1200)
 fig_sample_density.savefig('sample_density.png',dpi=1200)
 
 
@@ -208,7 +208,7 @@ ax_crpr.set(xticks=[], yticks=[], frame_on=False)
 ax_crpr.add_artist(Circle(H['c']['center'], H['c']['radius'], color='blue', lw=5, fill=False))
 plt.gcf().set_size_inches(5, 5)
 plt.tight_layout()
-fig_crpr.savefig('crpr.tif',format='tif',dpi=1200)
+fig_crpr.savefig('crpr.png',dpi=1200)
 
 
 fig_sdpd, ax_crpr = plt.subplots()
@@ -223,7 +223,7 @@ ax_crpr.set(xticks=[], yticks=[], frame_on=False)
 ax_crpr.add_artist(Circle(H['c']['center'], H['c']['radius'], color='red', lw=5, fill=False))
 plt.gcf().set_size_inches(5, 5)
 plt.tight_layout()
-fig_sdpd.savefig('sdpd.tif',format='tif',dpi=1200)
+fig_sdpd.savefig('sdpd.png',dpi=1200)
 
 
 fig_sample_diff, ax = plt.subplots(nrows=4, ncols=11)
@@ -249,7 +249,7 @@ for i in range(D.shape[2]):
 [ax_diff_sample[i].set(xticks=[], yticks=[], frame_on=False) for i in range(D.shape[2], len(ax_diff_sample))]
 plt.gcf().set_size_inches(13, 5.5)
 plt.tight_layout()
-fig_sample_diff.savefig('sample_diff.tif',format='tif',dpi=1200)
+fig_sample_diff.savefig('sample_diff.png',dpi=1200)
 fig_sample_diff.savefig('sample_diff_sel.tif',format='tif',dpi=1200)
 
 

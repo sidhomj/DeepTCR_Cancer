@@ -31,4 +31,4 @@ leg = ax.legend(handles, labels,title='Likelihood of Response',frameon=False,fon
 leg.get_title().set_fontsize('12')
 leg._legend_box.align = "left"
 plt.show()
-plt.savefig('pfs.eps')
+plt.savefig('pfs.png',dpi=1200)

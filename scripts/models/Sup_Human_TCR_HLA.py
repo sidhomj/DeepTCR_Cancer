@@ -9,9 +9,9 @@ os.environ["CUDA DEVICE ORDER"] = 'PCI_BUS_ID'
 os.environ["CUDA_VISIBLE_DEVICES"] = str(gpu)
 
 DTCR = DeepTCR_WF('HLA_TCR')
-DTCR.Get_Data(directory='../../Data',Load_Prev_Data=False,
+DTCR.Get_Data(directory='../../Data/bulk_tcr/pre',Load_Prev_Data=False,
                aa_column_beta=1,count_column=2,v_beta_column=7,d_beta_column=14,j_beta_column=21,data_cut=1.0,
-              hla='../../Data/HLA_Ref_sup_AB.csv')
+              hla='../../Data/bulk_tcr/pre/HLA_Ref_sup_AB.csv')
 
 folds = 100
 LOO = 6

@@ -14,18 +14,10 @@ def GKDE(x,y,z=None):
     x ,y, z = x[r], y[r], z[r]
     return x,y,z,kernel,r
 
-df_scores1 = pd.read_csv('oliveira_tcrs_scored.csv')
-df_scores2 = pd.read_csv('../sc_analysis/tcrs_scored.csv')
-df_merge = pd.merge(df_scores1,df_scores2,on='cell.barcode')
-df_merge = df_merge[['CDR3B_1_x','CDR3B_1_y','pred_x','pred_y']]
-df_merge['diff'] = df_merge['pred_x']-df_merge['pred_y']
-df_merge.sort_values(by='diff',ascending=False,inplace=True)
-df_comp = pd.DataFrame()
-# df_comp['1'] =
-
+df_scores = pd.read_csv('oliveira_tcrs_scored.csv')
 df_scores.rename(columns={'final.clonotype.family':'TCR clonotype family'},inplace=True)
 
-df_antigen = pd.read_csv('../../SC/antigen.csv')
+df_antigen = pd.read_csv('../../Data/sc/antigen.csv')
 df_antigen['Cathegory'][df_antigen['Cathegory'] == 'Multi'] = 'NeoAg'
 
 train_list = []

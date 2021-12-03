@@ -7,7 +7,7 @@ import matplotlib
 df_scores = pd.read_csv('oliveira_tcrs_scored.csv')
 df_scores.rename(columns={'final.clonotype.family':'TCR clonotype family'},inplace=True)
 
-df = pd.read_csv('../../SC/antigen.csv')
+df = pd.read_csv('../../Data/sc/antigen.csv')
 df = pd.melt(df,id_vars=[df.columns[0]],
                value_vars=['NeoAg', 'Cathegory','norm TCR activation', 'Avidity'])
 
@@ -20,7 +20,7 @@ df2 = df
 df_merge = pd.merge(df_scores,df,on='TCR clonotype family')
 label_dict = {'MAA':'Tumor Specific', 'NeoAg':'Tumor Specific', 'Viral':'Virus Specific'}
 df_merge['label'] = df_merge['label'].map(label_dict)
-df_umap = pd.read_csv('../../SC/umap.csv')
+df_umap = pd.read_csv('../../Data/sc/umap.csv')
 df_umap.rename(columns={'Unnamed: 0':'cell.barcode 2'},inplace=True)
 df_merge = pd.merge(df_merge,df_umap,on='cell.barcode 2')
 labels = np.unique(df_merge['label'])

@@ -4,7 +4,7 @@ from DeepTCR.DeepTCR import DeepTCR_WF
 import numpy as np
 import pickle
 import os
-gpu = 5
+gpu = 0
 os.environ["CUDA DEVICE ORDER"] = 'PCI_BUS_ID'
 os.environ["CUDA_VISIBLE_DEVICES"] = str(gpu)
 

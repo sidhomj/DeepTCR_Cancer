@@ -42,7 +42,7 @@ ax[ii].set_title('P(Response)')
 ax[ii].set_xticks([])
 ax[ii].set_yticks([])
 plt.tight_layout()
-plt.savefig('umap.png',dpi=600)
+plt.savefig('umap.png',dpi=1200)
 
 # plt.tight_layout()
 

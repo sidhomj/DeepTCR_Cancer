@@ -37,12 +37,12 @@ df_pre['ID'] = df_pre['sample'].map(pre_dict)
 df_pre.dropna(subset=['ID'],inplace=True)
 df_pre['seq_id'] = df_pre['beta'] + '_' + df_pre['ID'].astype(str)
 
-DTCR = DeepTCR_WF('post')
-DTCR.Get_Data(directory='../../Data/bulk_tcr/post',Load_Prev_Data=False,
+DTCR = DeepTCR_WF('../models/post')
+DTCR.Get_Data(directory='../../Data/bulk_tcr/post',Load_Prev_Data=True,
                aa_column_beta=1,count_column=2,v_beta_column=7,d_beta_column=14,j_beta_column=21,data_cut=1.0,
               hla='../../Data_Post/HLA_Ref_sup_AB.csv')
 
-with open('../cm038_ft_pred_inf.pkl','rb') as f:
+with open('../models/cm038_ft_pred_inf.pkl','rb') as f:
     features,predicted = pickle.load(f)
 
 df_post = pd.DataFrame()

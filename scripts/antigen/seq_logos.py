@@ -23,7 +23,7 @@ df['crpr'] = predicted[:,0]
 df['sdpd'] = predicted[:,1]
 class_sel = 'sdpd'
 df.sort_values(by=class_sel,ascending=False,inplace=True)
-DTCR = DeepTCR_WF('HLA_TCR')
+DTCR = DeepTCR_WF('../models/HLA_TCR')
 num_seq = 50
 DTCR.Residue_Sensitivity_Logo(beta_sequences=np.array(df['beta'].iloc[0:num_seq]),
                               v_beta=np.array(df['v_beta'].iloc[0:num_seq]),

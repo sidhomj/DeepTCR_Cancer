@@ -18,20 +18,31 @@ for ii,c in enumerate(cuts,0):
         order.append(str(ii))
     except:
         continue
-# df = df[(df['freq_pre']>0.01) & (df['freq_post']>0.00)]
-# df = df[df['counts_pre']>10]
-# df = df[df['freq_pre']>0]
-df = df[df['freq_post']>0]
+
+df_pre = df[df['freq_pre']>0]
 plt.figure()
-g = sns.boxplot(data=df,hue='gt',y='delta',x='seq_type',showfliers=False,order=order,showmeans=True)
+g = sns.boxplot(data=df_pre,hue='gt',y='delta',x='seq_type',showfliers=False,order=order,showmeans=True)
 plt.xlabel('')
-plt.ylabel('Δ',fontsize=26)
+plt.ylabel('Δ Frequency',fontsize=26)
 plt.xticks([])
 ax = plt.gca()
 g.legend_.set_title(None)
 plt.legend(fontsize='x-large')
 plt.tight_layout()
-plt.savefig('delta.png',dpi=600)
+plt.savefig('delta_pre_clone.png',dpi=1200)
+
+df_post = df[df['freq_post']>0]
+plt.figure()
+g = sns.boxplot(data=df_post,hue='gt',y='delta',x='seq_type',showfliers=False,order=order,showmeans=True)
+plt.xlabel('')
+plt.ylabel('Δ Frequency',fontsize=26)
+plt.xticks([])
+ax = plt.gca()
+g.legend_.set_title(None)
+plt.legend(fontsize='x-large')
+plt.tight_layout()
+plt.savefig('delta_post_clone.png',dpi=1200)
+
 
 plt.figure()
 g = sns.boxplot(data=df,hue='gt',y='abs_delta',x='seq_type',showfliers=False,order=order,showmeans=True)

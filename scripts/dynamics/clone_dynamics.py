@@ -20,7 +20,7 @@ for ii,c in enumerate(cuts,0):
         continue
 
 plt.figure()
-g = sns.boxplot(data=df,hue='gt',y='delta',x='seq_type',showfliers=False,order=order)
+g = sns.boxplot(data=df,hue='gt',y='delta',x='seq_type',showfliers=False,order=order,showmeans=True)
 plt.xlabel('')
 plt.ylabel('Δ',fontsize=26)
 plt.xticks([])
@@ -31,7 +31,7 @@ plt.tight_layout()
 plt.savefig('delta.png',dpi=600)
 
 plt.figure()
-g = sns.boxplot(data=df,hue='gt',y='abs_delta',x='seq_type',showfliers=False,order=order)
+g = sns.boxplot(data=df,hue='gt',y='abs_delta',x='seq_type',showfliers=False,order=order,showmeans=True,whis=[5,95])
 plt.xlabel('')
 plt.ylabel('Absolute Δ',fontsize=26)
 plt.xticks([])

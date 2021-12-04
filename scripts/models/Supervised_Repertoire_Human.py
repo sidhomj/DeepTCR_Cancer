@@ -64,7 +64,7 @@ ax2.spines['right'].set_visible(False)
 ax2.spines['top'].set_visible(False)
 sns.violinplot(data=df_bootstrap,x='model',y='auc',ax=ax2,cut=0)
 ax2.set_xlabel('')
-plt.savefig('human_roc.eps')
+plt.savefig('human_roc.png',dpi=1200)
 
 #Get P-Values
 df_pval = pd.DataFrame()

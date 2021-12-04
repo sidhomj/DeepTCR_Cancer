@@ -107,7 +107,7 @@ hla = DTCR.hla_data_seq
 sample_id = DTCR.sample_id
 
 file = 'cm038_x2_u.pkl'
-featurize = True
+featurize = False
 if featurize:
     DTCR_U = DeepTCR_U('pre_vae', device=1)
     DTCR_U.Load_Data(beta_sequences=beta_sequences, v_beta=v_beta, d_beta=d_beta, j_beta=j_beta, hla=hla)

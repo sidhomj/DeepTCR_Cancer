@@ -189,7 +189,7 @@ for i in range(H['h'].shape[2]):
 [ax_supp_density[i].set(xticks=[], yticks=[], frame_on=False) for i in range(H['h'].shape[-1], len(ax_supp_density))]
 plt.gcf().set_size_inches(13, 5.5)
 plt.tight_layout()
-fig_sample_density.savefig('qual/sample_density.tif',format='tif',dpi=1200)
+fig_sample_density.savefig('sample_density_inf.png',dpi=1200)
 
 fig_crpr, ax_crpr = plt.subplots()
 ax_crpr.cla()
@@ -203,7 +203,7 @@ ax_crpr.set(xticks=[], yticks=[], frame_on=False)
 ax_crpr.add_artist(Circle(H['c']['center'], H['c']['radius'], color='blue', lw=5, fill=False))
 plt.gcf().set_size_inches(5, 5)
 plt.tight_layout()
-fig_crpr.savefig('crpr_post.png',dpi=1200)
+fig_crpr.savefig('crpr_inf.png',dpi=1200)
 
 
 fig_sdpd, ax_crpr = plt.subplots()
@@ -218,7 +218,7 @@ ax_crpr.set(xticks=[], yticks=[], frame_on=False)
 ax_crpr.add_artist(Circle(H['c']['center'], H['c']['radius'], color='red', lw=5, fill=False))
 plt.gcf().set_size_inches(5, 5)
 plt.tight_layout()
-fig_sdpd.savefig('sdpd_post.png',dpi=1200)
+fig_sdpd.savefig('sdpd_inf.png',dpi=1200)
 
 
 fig_sample_diff, ax = plt.subplots(nrows=4, ncols=11)

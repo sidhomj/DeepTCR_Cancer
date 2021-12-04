@@ -61,7 +61,7 @@ def hist2d_denisty_plot(h, X, Y, ax, log_transform=False, gaussian_sigma=-1, nor
 
 
 os.environ["CUDA DEVICE ORDER"] = 'PCI_BUS_ID'
-os.environ["CUDA_VISIBLE_DEVICES"] = "6"
+os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 
 DTCR = DeepTCR_WF('../models/post')
 DTCR.Get_Data(directory='../../Data_Post',Load_Prev_Data=True,
@@ -109,7 +109,7 @@ hla = DTCR.hla_data_seq[sel_idx]
 sample_id = DTCR.sample_id[sel_idx]
 
 file = 'cm038_x2_u_inf.pkl'
-featurize = False
+featurize = True
 if featurize:
     DTCR_U = DeepTCR_U('pre_vae', device=1)
     features = DTCR_U.Sequence_Inference(beta_sequences=beta_sequences, v_beta=v_beta, d_beta=d_beta, j_beta=j_beta, hla=hla)
@@ -139,7 +139,7 @@ d['counts'] = d.groupby('sample')['freq'].transform(lambda x: x / x.min())
 s = pd.read_csv('../models/sample_tcr_hla_inf.csv')
 s = s.groupby(['Samples']).agg({'y_pred':'mean','y_test':'mean'}).reset_index()
 s.rename(columns={'y_pred': 'preds','Samples':'sample'}, inplace=True)
-df_master = pd.read_csv('Master_Beta.csv')
+df_master = pd.read_csv('../Data/other/Master_Beta.csv')
 df_master.dropna(subset=['Pre_Sample','Post_Sample'],inplace=True)
 sample_dict = dict(zip(df_master['Post_Sample'],df_master['ID'].astype(str)))
 s['ID'] = s['sample'].map(sample_dict)
@@ -203,7 +203,7 @@ ax_crpr.set(xticks=[], yticks=[], frame_on=False)
 ax_crpr.add_artist(Circle(H['c']['center'], H['c']['radius'], color='blue', lw=5, fill=False))
 plt.gcf().set_size_inches(5, 5)
 plt.tight_layout()
-fig_crpr.savefig('qual/crpr.tif',format='tif',dpi=1200)
+fig_crpr.savefig('crpr_post.png',dpi=1200)
 
 
 fig_sdpd, ax_crpr = plt.subplots()
@@ -218,7 +218,7 @@ ax_crpr.set(xticks=[], yticks=[], frame_on=False)
 ax_crpr.add_artist(Circle(H['c']['center'], H['c']['radius'], color='red', lw=5, fill=False))
 plt.gcf().set_size_inches(5, 5)
 plt.tight_layout()
-fig_sdpd.savefig('qual/sdpd.tif',format='tif',dpi=1200)
+fig_sdpd.savefig('sdpd_post.png',dpi=1200)
 
 
 fig_sample_diff, ax = plt.subplots(nrows=4, ncols=11)
@@ -244,11 +244,11 @@ for i in range(D.shape[2]):
 [ax_diff_sample[i].set(xticks=[], yticks=[], frame_on=False) for i in range(D.shape[2], len(ax_diff_sample))]
 plt.gcf().set_size_inches(13, 5.5)
 plt.tight_layout()
-fig_sample_diff.savefig('sample_diff_inf.tif',format='tif',dpi=1200)
+fig_sample_diff.savefig('sample_diff_inf.png',dpi=1200)
 
 fig_diff_overall, ax_diff_overall = plt.subplots()
 hist2d_denisty_plot(np.mean(D, axis=2), Ha['X'], Ha['Y'], ax_diff_overall, cmap='bwr', vmax=diff_vmax, vsym=True, normalize=False)
 ax_diff_overall.add_artist(Circle(H['c']['center'], H['c']['radius'], color='grey', lw=5, fill=False))
 plt.gcf().set_size_inches(5, 5)
 plt.tight_layout()
-fig_diff_overall.savefig('cohort_diff_inf.tif',format='tif',dpi=1200)
+fig_diff_overall.savefig('cohort_diff_inf.png',dpi=1200)

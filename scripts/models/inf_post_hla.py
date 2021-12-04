@@ -65,9 +65,10 @@ for m in np.unique(pre_preds['model']):
     sel['post_sample'] = sel['sample'].map(id_to_sample_dict)
     DFs.append(sel)
 
-p.join()
-p.close()
 df_pred = pd.concat(DFs)
 df_pred = df_pred[['post_sample','post_pred','y_test']]
 df_pred = df_pred.rename(columns={'post_pred':'y_pred','post_sample':'Samples'})
 df_pred.to_csv('sample_hla_inf.csv',index=False)
+
+p.join()
+p.close()

@@ -23,7 +23,7 @@ for model_name in model_info:
     model_info[model_name]['mean'] = model_info[model_name]['mc_preds'].groupby('Samples')[['y_test', 'y_pred']].agg(np.mean)
 
 # mc_preds per sample distribution plot sorted by sample mean in combo model
-_, ax = plt.subplots(ncols=3)
+_, ax = plt.subplots(ncols=3,figsize=(7,8))
 i = 0
 idx = model_info[model_name]['mean']['y_pred'].sort_values().index
 for model_name in model_info:
@@ -49,4 +49,4 @@ ranksums(model_info['TCR+HLA']['mean']['90 CI'], model_info['HLA']['mean']['90 C
 ranksums(model_info['TCR+HLA']['mean']['90 CI'], model_info['TCR']['mean']['90 CI'])
 ranksums(model_info['TCR']['mean']['90 CI'], model_info['HLA']['mean']['90 CI'])
 
-plt.savefig('certainty.eps')
+plt.savefig('certainty.png',dpi=1200)

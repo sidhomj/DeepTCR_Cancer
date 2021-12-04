@@ -82,22 +82,22 @@ df_plot['pred'] = predicted[:,0]
 df_plot['gt'] = DTCR.class_id
 df_plot['freq'] = DTCR.freq
 
-plt.figure()
-ax = sns.distplot(df_plot['pred'],1000,color='k',kde=False)
-N,bins= np.histogram(df_plot['pred'],1000)
-for p,b in zip(ax.patches,bins):
-    if b < cut_bottom:
-        p.set_facecolor('r')
-    elif b > cut_top:
-        p.set_facecolor('b')
-y_min,y_max = plt.ylim()
-plt.xlim([0,1])
-plt.xticks(np.arange(0.0,1.1,0.1))
-plt.yticks([])
-plt.xlabel('')
-plt.ylabel('')
-plt.show()
-plt.savefig('pred_hist.png',dpi=1200)
+# plt.figure()
+# ax = sns.distplot(df_plot['pred'],1000,color='k',kde=False)
+# N,bins= np.histogram(df_plot['pred'],1000)
+# for p,b in zip(ax.patches,bins):
+#     if b < cut_bottom:
+#         p.set_facecolor('r')
+#     elif b > cut_top:
+#         p.set_facecolor('b')
+# y_min,y_max = plt.ylim()
+# plt.xlim([0,1])
+# plt.xticks(np.arange(0.0,1.1,0.1))
+# plt.yticks([])
+# plt.xlabel('')
+# plt.ylabel('')
+# plt.show()
+# plt.savefig('pred_hist.png',dpi=1200)
 
 beta_sequences = DTCR.beta_sequences
 v_beta = DTCR.v_beta
@@ -107,7 +107,7 @@ hla = DTCR.hla_data_seq
 sample_id = DTCR.sample_id
 
 file = 'cm038_x2_u.pkl'
-featurize = False
+featurize = True
 if featurize:
     DTCR_U = DeepTCR_U('pre_vae', device=1)
     DTCR_U.Load_Data(beta_sequences=beta_sequences, v_beta=v_beta, d_beta=d_beta, j_beta=j_beta, hla=hla)
@@ -250,7 +250,7 @@ for i in range(D.shape[2]):
 plt.gcf().set_size_inches(13, 5.5)
 plt.tight_layout()
 fig_sample_diff.savefig('sample_diff.png',dpi=1200)
-fig_sample_diff.savefig('sample_diff_sel.tif',format='tif',dpi=1200)
+# fig_sample_diff.savefig('sample_diff_sel.tif',format='tif',dpi=1200)
 
 
 fig_diff_overall, ax_diff_overall = plt.subplots()
@@ -258,6 +258,6 @@ hist2d_denisty_plot(np.mean(D, axis=2), Ha['X'], Ha['Y'], ax_diff_overall, cmap=
 ax_diff_overall.add_artist(Circle(H['c']['center'], H['c']['radius'], color='grey', lw=5, fill=False))
 plt.gcf().set_size_inches(5, 5)
 plt.tight_layout()
-fig_diff_overall.savefig('cohort_diff.tif',format='tif',dpi=1200)
-fig_diff_overall.savefig('cohort_diff_sel.tif',format='tif',dpi=1200)
+fig_diff_overall.savefig('cohort_diff.png',dpi=1200)
+# fig_diff_overall.savefig('cohort_diff_sel.tif',format='tif',dpi=1200)
 

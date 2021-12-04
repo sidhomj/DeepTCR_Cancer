@@ -61,7 +61,7 @@ def hist2d_denisty_plot(h, X, Y, ax, log_transform=False, gaussian_sigma=-1, nor
 
 
 os.environ["CUDA DEVICE ORDER"] = 'PCI_BUS_ID'
-os.environ["CUDA_VISIBLE_DEVICES"] = "6"
+os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 
 DTCR = DeepTCR_WF('../models/HLA_TCR')
 DTCR.Get_Data(directory='../../Data',Load_Prev_Data=True,

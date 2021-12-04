@@ -23,10 +23,10 @@ hla = DTCR.hla_data_seq
 sample_id = DTCR.sample_id
 counts = DTCR.counts
 
-df_master = pd.read_csv('Master_Beta.csv')
+df_master = pd.read_csv('../../Data/other/Master_Beta.csv')
 df_master.dropna(subset=['Pre_Sample'],inplace=True)
 sample_dict = dict(zip(df_master['Pre_Sample'],df_master['ID']))
-df_master = pd.read_csv('Master_Beta.csv')
+df_master = pd.read_csv('../../Data/other/Master_Beta.csv')
 df_master.dropna(subset=['Post_Sample'],inplace=True)
 sample_dict.update(dict(zip(df_master['Post_Sample'],df_master['ID'])))
 id_to_sample_dict = dict(zip(df_master['ID'],df_master['Post_Sample']))

@@ -200,7 +200,6 @@ if matched_pre_post is False:
     # fig_sample_density.savefig('sample_density.tif',format='tif',dpi=1200)
     fig_sample_density.savefig('sample_density.png',dpi=1200)
 
-
     fig_crpr, ax_crpr = plt.subplots()
     ax_crpr.cla()
     D = H['h'][:, :, s['Response_cat'] == 'crpr']
@@ -214,7 +213,6 @@ if matched_pre_post is False:
     plt.gcf().set_size_inches(5, 5)
     plt.tight_layout()
     fig_crpr.savefig('crpr.png',dpi=1200)
-
 
     fig_sdpd, ax_crpr = plt.subplots()
     ax_crpr.cla()

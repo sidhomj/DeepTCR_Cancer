@@ -6,8 +6,8 @@ import matplotlib.pyplot as plt
 from sklearn.metrics import roc_auc_score,roc_curve
 
 model = 'TCR'
-# model = 'HLA'
-# model = 'TCR+HLA'
+model = 'HLA'
+model = 'TCR+HLA'
 if model == 'TCR':
     file_base = 'sample_tcr'
 elif model =='HLA':
@@ -78,7 +78,8 @@ df_merge['response'] = None
 df_merge['response'][df_merge['y_test_x']==1.0] = 'crpr'
 df_merge['response'][df_merge['y_test_x']==0.0] = 'sdpd'
 
-sns.scatterplot(data=df_merge,x='y_pred_x',y='y_pred_y',hue='response',s=100)
+pal = {'crpr':'royalblue','sdpd':'red'}
+sns.scatterplot(data=df_merge,x='y_pred_x',y='y_pred_y',hue='response',s=100,palette=pal)
 plt.plot([0, 1], [0, 1], color='navy', lw=2, linestyle='--')
 plt.xlabel('Pre-Tx Preds',fontsize=18)
 plt.ylabel('Post-Tx Preds',fontsize=18)

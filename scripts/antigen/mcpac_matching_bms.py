@@ -7,6 +7,8 @@ from DeepTCR.DeepTCR import DeepTCR_SS, DeepTCR_WF
 import pickle
 import os
 from scipy.stats import gaussian_kde
+from matplotlib.patches import Circle
+
 def GKDE(x,y,z=None):
     xy = np.vstack([x, y])
     kernel = gaussian_kde(xy,weights=z)
@@ -65,9 +67,9 @@ DTCR.Get_Data(directory='../../Data',Load_Prev_Data=True,
 with open('../models/cm038_ft_pred.pkl','rb') as f:
     features,predicted = pickle.load(f)
 
-file = 'cm038_x2_u.pkl'
+file = '../unsup/cm038_x2_u.pkl'
 featurize = False
-with open(os.path.join('../human',file),'rb') as f:
+with open(os.path.join(file),'rb') as f:
     X_2 = pickle.load(f)
 
 df_bms = pd.DataFrame()
@@ -95,6 +97,7 @@ sns.violinplot(data=df_merge,x='label',y='pred',cut=0,order=order,palette=pal)
 plt.ylabel('P(Response)',fontsize=24)
 plt.xticks(rotation=90)
 plt.tight_layout()
+plt.savefig('mcpas_violin.png',dpi=1200)
 df_merge.sort_values(by='label',inplace=True)
 
 win = 10
@@ -103,21 +106,33 @@ cut_top = np.percentile(predicted[:,0],100-win)
 df_merge = df_merge[(df_merge['pred'] > cut_top) | (df_merge['pred']< cut_bottom)]
 
 #umap
-fig,ax = plt.subplots(1,len(order),figsize=(14,4))
-for ii,l in enumerate(order):
-    df_plot = df_merge[df_merge['label']==l]
-    x,y,c,_,_ = GKDE(np.array(df_plot['x']),np.array(df_plot['y']))
-    # x,y,c = np.array(df_plot['x']),np.array(df_plot['y']),df_plot['pred']
-    ax[ii].scatter(x,y,c=c,cmap='jet',s=25)
-    ax[ii].set_title(l)
-    ax[ii].set_xticks([])
-    ax[ii].set_yticks([])
-plt.tight_layout()
+# fig,ax = plt.subplots(1,len(order),figsize=(14,4))
+# for ii,l in enumerate(order):
+#     df_plot = df_merge[df_merge['label']==l]
+#     x,y,c,_,_ = GKDE(np.array(df_plot['x']),np.array(df_plot['y']))
+#     # x,y,c = np.array(df_plot['x']),np.array(df_plot['y']),df_plot['pred']
+#     ax[ii].scatter(x,y,c=c,cmap='jet',s=25)
+#     ax[ii].set_title(l)
+#     ax[ii].set_xticks([])
+#     ax[ii].set_yticks([])
+# plt.tight_layout()
 
 plt.scatter(df_merge['x'],df_merge['y'])
+plt.gca().set_aspect('equal')
 xlim = plt.xlim()
 ylim = plt.ylim()
+dim1 = xlim[1]-xlim[0]
+dim2 = ylim[1]-ylim[0]
+maxdim = np.max([dim1,dim2])
+r = (maxdim/2)*1.25
+c_coord = (xlim[0]+xlim[1])/2, (ylim[0]+ylim[1])/2
+xlim = c_coord[0]-r,c_coord[0]+r
+ylim = c_coord[1]-r,c_coord[1]+r
+plt.xlim(xlim)
+plt.ylim(ylim)
 plt.close()
+# c_coord = (xlim[0]+xlim[1])/2, (ylim[0]+ylim[1])/2
+# r = np.sqrt(np.square(xlim[1]-xlim[0])+np.square(ylim[1]-ylim[0]))/2
 
 order = ['Viral','Melan-A/MART-1']
 fig,ax = plt.subplots(1,len(order),figsize=(len(order)*4,4))
@@ -126,9 +141,13 @@ for ii,l in enumerate(order):
     x,y,c,_,_ = GKDE(np.array(df_plot['x']),np.array(df_plot['y']))
     # x,y,c = np.array(df_plot['x']),np.array(df_plot['y']),df_plot['pred']
     ax[ii].scatter(x,y,c=c,cmap='jet',s=25)
-    ax[ii].set_title(l)
+    ax[ii].set_title(l,fontsize=24)
     ax[ii].set_xticks([])
     ax[ii].set_yticks([])
     ax[ii].set_xlim(xlim)
     ax[ii].set_ylim(ylim)
+    ax[ii].add_artist(Circle(c_coord,r*0.95,color='black',fill=False,lw=5))
+    ax[ii].set_aspect('equal')
+    ax[ii].axis('off')
 plt.tight_layout()
+plt.savefig('umap_matched.png',dpi=1200)

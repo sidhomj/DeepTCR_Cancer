@@ -36,4 +36,4 @@ DTCR.Residue_Sensitivity_Logo(beta_sequences=np.array(df['beta'].iloc[0:num_seq]
                               class_sel = class_sel,
                               min_size=0.25,
                               Load_Prev_Data=False)
-plt.savefig(class_sel+'_rsl.png',dpi=600)
+plt.savefig(class_sel+'_rsl.png',dpi=1200)

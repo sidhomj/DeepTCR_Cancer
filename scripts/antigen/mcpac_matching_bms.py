@@ -135,7 +135,7 @@ ylim = plt.ylim()
 dim1 = xlim[1]-xlim[0]
 dim2 = ylim[1]-ylim[0]
 maxdim = np.max([dim1,dim2])
-r = (maxdim/2)*1.25
+r = (maxdim/2)*1.3
 c_coord = (xlim[0]+xlim[1])/2, (ylim[0]+ylim[1])/2
 xlim = c_coord[0]-r,c_coord[0]+r
 ylim = c_coord[1]-r,c_coord[1]+r
@@ -145,8 +145,9 @@ plt.close()
 # c_coord = (xlim[0]+xlim[1])/2, (ylim[0]+ylim[1])/2
 # r = np.sqrt(np.square(xlim[1]-xlim[0])+np.square(ylim[1]-ylim[0]))/2
 
-order = ['Viral','Melan-A/MART-1']
-fig,ax = plt.subplots(1,len(order),figsize=(len(order)*4,4))
+order = ['Viral','MART-1']
+# fig,ax = plt.subplots(1,len(order),figsize=(len(order)*4,4))
+fig,ax = plt.subplots(len(order),1,figsize=(4,len(order)*4))
 for ii,l in enumerate(order):
     df_plot = df_merge[df_merge['label2']==l]
     x,y,c,_,_ = GKDE(np.array(df_plot['x']),np.array(df_plot['y']))

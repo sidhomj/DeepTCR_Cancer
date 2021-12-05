@@ -22,8 +22,9 @@ for ii,c in enumerate(cuts,0):
 df_pre = df[df['freq_pre']>0]
 df_agg = df_pre.groupby(['sample','seq_type','gt']).agg({'delta':np.sum}).reset_index()
 
+pal = {'crpr':'royalblue','sdpd':'red'}
 plt.figure()
-g = sns.boxplot(data=df_agg,hue='gt',y='delta',x='seq_type',showfliers=False,order=order,showmeans=True)
+g = sns.boxplot(data=df_agg,hue='gt',y='delta',x='seq_type',showfliers=False,order=order,showmeans=True,palette=pal)
 plt.xlabel('')
 plt.ylabel('Δ Frequency',fontsize=26)
 plt.xticks([])
@@ -38,7 +39,7 @@ df_agg = df_post.groupby(['sample','seq_type','gt']).agg({'delta':np.sum}).reset
 
 plt.figure()
 pal = {'crpr':'royalblue','sdpd':'red'}
-g = sns.boxplot(data=df_agg,hue='gt',y='delta',x='seq_type',showfliers=False,order=order,palette=pal)
+g = sns.boxplot(data=df_agg,hue='gt',y='delta',x='seq_type',showfliers=False,order=order,showmeans=True,palette=pal)
 plt.xlabel('')
 plt.ylabel('Δ Frequency',fontsize=26)
 plt.xticks([])

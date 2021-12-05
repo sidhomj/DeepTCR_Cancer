@@ -106,10 +106,10 @@ counts_pre_dict = dict(zip(df_sum.index,df_sum['counts_pre']))
 counts_post_dict = dict(zip(df_sum.index,df_sum['counts_post']))
 df_merge['counts_pre_total'] = df_merge['sample'].map(counts_pre_dict)
 df_merge['counts_post_total'] = df_merge['sample'].map(counts_post_dict)
-df_merge['OR'],df_merge['p_val'] = zip(*df_merge.apply(lambda x:
-                                   fisher_exact([[x['counts_post'],x['counts_pre']],
-                                                 [x['counts_post_total'],x['counts_pre_total']]]),
-                                   axis=1))
-_,df_merge['p_val_adj'],_,_ = multipletests(df_merge['p_val'],method='fdr_bh')
+# df_merge['OR'],df_merge['p_val'] = zip(*df_merge.apply(lambda x:
+#                                    fisher_exact([[x['counts_post'],x['counts_pre']],
+#                                                  [x['counts_post_total'],x['counts_pre_total']]]),
+#                                    axis=1))
+# _,df_merge['p_val_adj'],_,_ = multipletests(df_merge['p_val'],method='fdr_bh')
 with open('df_dynamics.pkl','wb') as f:
     pickle.dump(df_merge,f,protocol=4)

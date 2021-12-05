@@ -22,7 +22,7 @@ for ii,c in enumerate(cuts,0):
 pal = {'crpr':'royalblue','sdpd':'red'}
 
 df_pre = df[df['freq_pre']>0]
-plt.figure()
+fig,ax = plt.subplots(figsize=(6,5))
 g = sns.boxplot(data=df_pre,hue='gt',y='delta',x='seq_type',showfliers=False,order=order,showmeans=True,palette=pal)
 plt.xlabel('')
 plt.ylabel('Δ Frequency',fontsize=26)
@@ -34,7 +34,7 @@ plt.tight_layout()
 plt.savefig('delta_pre_clone.png',dpi=1200)
 
 df_post = df[df['freq_post']>0]
-plt.figure()
+fig,ax = plt.subplots(figsize=(6,5))
 g = sns.boxplot(data=df_post,hue='gt',y='delta',x='seq_type',showfliers=False,order=order,showmeans=True,palette=pal)
 plt.xlabel('')
 plt.ylabel('Δ Frequency',fontsize=26)

@@ -33,9 +33,9 @@ df_maa = df[df['Pathology']=='Melanoma']
 cat_sel = ['Melan-A/MART-1','Melan-A A27L','MelanA/MART1','mutated CDKNA2','GP100-IMD','BAGE','MAGE-1','gp100']
 df_maa = df_maa[df_maa['Antigen.protein'].isin(cat_sel)]
 cat_dict = {}
-cat_dict['Melan-A/MART-1'] = 'Melan-A/MART-1'
-cat_dict['Melan-A A27L'] = 'Melan-A/MART-1'
-cat_dict['MelanA/MART1'] = 'Melan-A/MART-1'
+cat_dict['Melan-A/MART-1'] = 'MART-1'
+cat_dict['Melan-A A27L'] = 'MART-1'
+cat_dict['MelanA/MART1'] = 'MART-1'
 cat_dict['GP100-IMD'] = 'GP100'
 cat_dict['mutated CDKNA2'] = 'CDKNA2'
 cat_dict['BAGE'] = 'BAGE'
@@ -55,6 +55,13 @@ df_path = df_path.groupby(['CDR3.beta.aa']).agg({'Antigen.protein':'first','Epit
 df_path['label'] = df_path['Pathology']
 df_path['label2'] = 'Viral'
 train_list.append(df_path)
+label_dict = {'Melan-A/MART-1':'MART-1',
+              'Cytomegalovirus (CMV)':'CMV',
+              'Influenza':'Flu',
+              'Epstein Barr virus (EBV)':'EBV',
+              'Yellow fever virus':'YF'}
+path_sel = list(map(label_dict.get,path_sel))
+df_path['label'] = df_path['label'].map(label_dict)
 
 df_train = pd.concat(train_list)
 df_train = Process_Seq(df_train,'CDR3.beta.aa')
@@ -91,11 +98,15 @@ order_viral = list(df_merge[df_merge['label'].isin(path_sel)].groupby(['label'])
 order_maa = list(df_merge[df_merge['label'].isin(np.unique(list(cat_dict.values())))].groupby(['label']).mean().sort_values(by='pred').index)
 order_maa = [order_maa[0]]
 order = np.hstack([order_maa,order_viral])
-pal = {'Melan-A/MART-1':'royalblue','Cytomegalovirus (CMV)':'r', 'Influenza':'r',
-       'Epstein Barr virus (EBV)':'r', 'Yellow fever virus':'r'}
-sns.violinplot(data=df_merge,x='label',y='pred',cut=0,order=order,palette=pal)
+pal = {'MART-1':'royalblue','CMV':'r', 'Flu':'r',
+       'EBV':'r', 'YF':'r'}
+fig,ax = plt.subplots(figsize=(len(order)*1.25,5))
+sns.violinplot(data=df_merge,x='label',y='pred',cut=0,order=order,palette=pal,ax=ax)
 plt.ylabel('P(Response)',fontsize=24)
-plt.xticks(rotation=90)
+plt.xlabel('')
+plt.xticks(fontsize=14)
+plt.yticks(fontsize=12)
+plt.ylim([0,1])
 plt.tight_layout()
 plt.savefig('mcpas_violin.png',dpi=1200)
 df_merge.sort_values(by='label',inplace=True)

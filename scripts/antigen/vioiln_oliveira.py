@@ -40,15 +40,19 @@ df_antigen = pd.concat(train_list)
 
 df_merge = pd.merge(df_scores,df_antigen,on='TCR clonotype family')
 df_merge.drop_duplicates(subset=['TCR clonotype family','CDR3B_1'],inplace=True)
-
-pal = {'NeoAg':'royalblue','MLANA27-35':'royalblue','EBV':'r','Flu':'r','YF':'r'}
+df_merge['label'][df_merge['label']=='MLANA27-35'] = 'MART-1'
+pal = {'NeoAg':'royalblue','MART-1':'royalblue','EBV':'r','Flu':'r','YF':'r'}
+order = list(df_merge.groupby(['label']).mean()['pred'].sort_values().index)
+fig,ax = plt.subplots(figsize=(len(order)*1.25,5))
 sns.violinplot(data=df_merge,x='label',y='pred',
-            order = list(df_merge.groupby(['label']).mean()['pred'].sort_values().index),
+            order = order ,
                palette=pal,
-               cut=0)
+               cut=0,
+               ax=ax)
 plt.ylabel('P(Response)',fontsize=24)
 plt.xlabel('')
 plt.xticks(fontsize=14)
 plt.yticks(fontsize=12)
+plt.ylim([0,1])
 plt.tight_layout()
 plt.savefig('violin_oliveira.png',dpi=1200)

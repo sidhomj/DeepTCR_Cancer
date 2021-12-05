@@ -146,7 +146,7 @@ for ii,l in enumerate(order):
     ax[ii].set_yticks([])
     ax[ii].set_xlim(xlim)
     ax[ii].set_ylim(ylim)
-    ax[ii].add_artist(Circle(c_coord,r*0.95,color='black',fill=False,lw=5))
+    ax[ii].add_artist(Circle(c_coord,r*0.95,color='grey',fill=False,lw=5))
     ax[ii].set_aspect('equal')
     ax[ii].axis('off')
 plt.tight_layout()

@@ -59,7 +59,7 @@ def hist2d_denisty_plot(h, X, Y, ax, log_transform=False, gaussian_sigma=-1, nor
     ax.pcolormesh(X, Y, D, shading='gouraud', cmap=cmap, vmin=-vmax if (vsym == True) & (vmax is not None) else None, vmax=vmax)
     ax.set(xticks=[], yticks=[], frame_on=False)
 
-
+matched_pre_post = False
 os.environ["CUDA DEVICE ORDER"] = 'PCI_BUS_ID'
 os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 
@@ -141,13 +141,14 @@ s = pd.read_csv('../models/sample_tcr_hla.csv')
 s = s.groupby(['Samples']).agg({'y_pred':'mean','y_test':'mean'}).reset_index()
 s.rename(columns={'y_pred': 'preds','Samples':'sample'}, inplace=True)
 
-# #select for 35 samples with matched pre/post
-# df_master = pd.read_csv('Master_Beta.csv')
-# df_master.dropna(subset=['Pre_Sample','Post_Sample'],inplace=True)
-# sample_dict = dict(zip(df_master['Pre_Sample'],df_master['ID'].astype(str)))
-# s['ID'] = s['sample'].map(sample_dict)
-# s['sample'].isin(df_master['Pre_Sample'])
-# s = s[s['sample'].isin(df_master['Pre_Sample'])]
+if matched_pre_post:
+    #select for 35 samples with matched pre/post
+    df_master = pd.read_csv('../../Data/other/Master_Beta.csv')
+    df_master.dropna(subset=['Pre_Sample','Post_Sample'],inplace=True)
+    sample_dict = dict(zip(df_master['Pre_Sample'],df_master['ID'].astype(str)))
+    s['ID'] = s['sample'].map(sample_dict)
+    s['sample'].isin(df_master['Pre_Sample'])
+    s = s[s['sample'].isin(df_master['Pre_Sample'])]
 
 s['sample'] = s['sample'].str.replace('_TCRB.tsv', '')
 s['Response_cat'] = None
@@ -249,8 +250,10 @@ for i in range(D.shape[2]):
 [ax_diff_sample[i].set(xticks=[], yticks=[], frame_on=False) for i in range(D.shape[2], len(ax_diff_sample))]
 plt.gcf().set_size_inches(13, 5.5)
 plt.tight_layout()
-fig_sample_diff.savefig('sample_diff.png',dpi=1200)
-# fig_sample_diff.savefig('sample_diff_sel.tif',format='tif',dpi=1200)
+if matched_pre_post is False:
+    fig_sample_diff.savefig('sample_diff.png',dpi=1200)
+else:
+    fig_sample_diff.savefig('sample_diff_matched.png',dpi=1200)
 
 
 fig_diff_overall, ax_diff_overall = plt.subplots()
@@ -258,6 +261,8 @@ hist2d_denisty_plot(np.mean(D, axis=2), Ha['X'], Ha['Y'], ax_diff_overall, cmap=
 ax_diff_overall.add_artist(Circle(H['c']['center'], H['c']['radius'], color='grey', lw=5, fill=False))
 plt.gcf().set_size_inches(5, 5)
 plt.tight_layout()
-fig_diff_overall.savefig('cohort_diff.png',dpi=1200)
-# fig_diff_overall.savefig('cohort_diff_sel.tif',format='tif',dpi=1200)
+if matched_pre_post is False:
+    fig_diff_overall.savefig('cohort_diff.png',dpi=1200)
+else:
+    fig_diff_overall.savefig('cohort_diff_matched.png',dpi=1200)
 

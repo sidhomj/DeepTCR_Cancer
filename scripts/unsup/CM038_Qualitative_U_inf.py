@@ -109,7 +109,7 @@ hla = DTCR.hla_data_seq[sel_idx]
 sample_id = DTCR.sample_id[sel_idx]
 
 file = 'cm038_x2_u_inf.pkl'
-featurize = True
+featurize = False
 if featurize:
     DTCR_U = DeepTCR_U('pre_vae', device=1)
     features = DTCR_U.Sequence_Inference(beta_sequences=beta_sequences, v_beta=v_beta, d_beta=d_beta, j_beta=j_beta, hla=hla)
@@ -139,7 +139,7 @@ d['counts'] = d.groupby('sample')['freq'].transform(lambda x: x / x.min())
 s = pd.read_csv('../models/sample_tcr_hla_inf.csv')
 s = s.groupby(['Samples']).agg({'y_pred':'mean','y_test':'mean'}).reset_index()
 s.rename(columns={'y_pred': 'preds','Samples':'sample'}, inplace=True)
-df_master = pd.read_csv('../Data/other/Master_Beta.csv')
+df_master = pd.read_csv('../../Data/other/Master_Beta.csv')
 df_master.dropna(subset=['Pre_Sample','Post_Sample'],inplace=True)
 sample_dict = dict(zip(df_master['Post_Sample'],df_master['ID'].astype(str)))
 s['ID'] = s['sample'].map(sample_dict)
@@ -180,45 +180,45 @@ map_labels = [map_dict[_] for _ in s['Response_cat'].values]
 H = histogram_2d_cohort([d.loc[d['sample'] == i, ['y', 'x']].values for i in s['sample'].values], [d.loc[d['sample'] == i, 'counts'].values for i in s['sample'].values], grid_size)
 
 
-# fig_sample_density, ax = plt.subplots(nrows=4, ncols=11)
-# ax_supp_density = ax.flatten()
-# for i in range(H['h'].shape[2]):
-#     hist2d_denisty_plot(H['h'][:, :, i], H['X'], H['Y'], ax_supp_density[i], log_transform=True, gaussian_sigma=gaussian_sigma, cmap=map_labels[i], vmax=density_vmax)
-#     ax_supp_density[i].add_artist(Circle(H['c']['center'], H['c']['radius'], color=color_labels[i], lw=3, fill=False))
-#     ax_supp_density[i].set_title('%.3f' % s['preds'].iloc[i], fontsize=18)
-# [ax_supp_density[i].set(xticks=[], yticks=[], frame_on=False) for i in range(H['h'].shape[-1], len(ax_supp_density))]
-# plt.gcf().set_size_inches(13, 5.5)
-# plt.tight_layout()
-# fig_sample_density.savefig('sample_density_inf.png',dpi=1200)
+fig_sample_density, ax = plt.subplots(nrows=4, ncols=11)
+ax_supp_density = ax.flatten()
+for i in range(H['h'].shape[2]):
+    hist2d_denisty_plot(H['h'][:, :, i], H['X'], H['Y'], ax_supp_density[i], log_transform=True, gaussian_sigma=gaussian_sigma, cmap=map_labels[i], vmax=density_vmax)
+    ax_supp_density[i].add_artist(Circle(H['c']['center'], H['c']['radius'], color=color_labels[i], lw=3, fill=False))
+    ax_supp_density[i].set_title('%.3f' % s['preds'].iloc[i], fontsize=18)
+[ax_supp_density[i].set(xticks=[], yticks=[], frame_on=False) for i in range(H['h'].shape[-1], len(ax_supp_density))]
+plt.gcf().set_size_inches(13, 5.5)
+plt.tight_layout()
+fig_sample_density.savefig('sample_density_inf.png',dpi=1200)
 
-# fig_crpr, ax_crpr = plt.subplots()
-# ax_crpr.cla()
-# D = H['h'][:, :, s['Response_cat'] == 'crpr']
-# D = np.log(D + 1)
-# D = np.stack([ndi.gaussian_filter(D[:, :, i], sigma=gaussian_sigma) for i in range(D.shape[2])], axis=2)
-# D /= D.sum(axis=0).sum(axis=0)[np.newaxis, np.newaxis, :]
-# D = np.mean(D, axis=2)
-# ax_crpr.pcolormesh(H['X'], H['Y'], D, cmap=cmap_blue, shading='gouraud', vmin=0, vmax=density_vmax)
-# ax_crpr.set(xticks=[], yticks=[], frame_on=False)
-# ax_crpr.add_artist(Circle(H['c']['center'], H['c']['radius'], color='blue', lw=5, fill=False))
-# plt.gcf().set_size_inches(5, 5)
-# plt.tight_layout()
-# fig_crpr.savefig('crpr_inf.png',dpi=1200)
+fig_crpr, ax_crpr = plt.subplots()
+ax_crpr.cla()
+D = H['h'][:, :, s['Response_cat'] == 'crpr']
+D = np.log(D + 1)
+D = np.stack([ndi.gaussian_filter(D[:, :, i], sigma=gaussian_sigma) for i in range(D.shape[2])], axis=2)
+D /= D.sum(axis=0).sum(axis=0)[np.newaxis, np.newaxis, :]
+D = np.mean(D, axis=2)
+ax_crpr.pcolormesh(H['X'], H['Y'], D, cmap=cmap_blue, shading='gouraud', vmin=0, vmax=density_vmax)
+ax_crpr.set(xticks=[], yticks=[], frame_on=False)
+ax_crpr.add_artist(Circle(H['c']['center'], H['c']['radius'], color='blue', lw=5, fill=False))
+plt.gcf().set_size_inches(5, 5)
+plt.tight_layout()
+fig_crpr.savefig('crpr_inf.png',dpi=1200)
 
 
-# fig_sdpd, ax_crpr = plt.subplots()
-# ax_crpr.cla()
-# D = H['h'][:, :, s['Response_cat'] == 'sdpd']
-# D = np.log(D + 1)
-# D = np.stack([ndi.gaussian_filter(D[:, :, i], sigma=gaussian_sigma) for i in range(D.shape[2])], axis=2)
-# D /= D.sum(axis=0).sum(axis=0)[np.newaxis, np.newaxis, :]
-# D = np.mean(D, axis=2)
-# ax_crpr.pcolormesh(H['X'], H['Y'], D, cmap=cmap_red, shading='gouraud', vmin=0, vmax=density_vmax)
-# ax_crpr.set(xticks=[], yticks=[], frame_on=False)
-# ax_crpr.add_artist(Circle(H['c']['center'], H['c']['radius'], color='red', lw=5, fill=False))
-# plt.gcf().set_size_inches(5, 5)
-# plt.tight_layout()
-# fig_sdpd.savefig('sdpd_inf.png',dpi=1200)
+fig_sdpd, ax_crpr = plt.subplots()
+ax_crpr.cla()
+D = H['h'][:, :, s['Response_cat'] == 'sdpd']
+D = np.log(D + 1)
+D = np.stack([ndi.gaussian_filter(D[:, :, i], sigma=gaussian_sigma) for i in range(D.shape[2])], axis=2)
+D /= D.sum(axis=0).sum(axis=0)[np.newaxis, np.newaxis, :]
+D = np.mean(D, axis=2)
+ax_crpr.pcolormesh(H['X'], H['Y'], D, cmap=cmap_red, shading='gouraud', vmin=0, vmax=density_vmax)
+ax_crpr.set(xticks=[], yticks=[], frame_on=False)
+ax_crpr.add_artist(Circle(H['c']['center'], H['c']['radius'], color='red', lw=5, fill=False))
+plt.gcf().set_size_inches(5, 5)
+plt.tight_layout()
+fig_sdpd.savefig('sdpd_inf.png',dpi=1200)
 
 
 fig_sample_diff, ax = plt.subplots(nrows=4, ncols=11)

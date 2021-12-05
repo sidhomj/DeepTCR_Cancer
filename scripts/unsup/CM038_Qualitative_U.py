@@ -59,7 +59,8 @@ def hist2d_denisty_plot(h, X, Y, ax, log_transform=False, gaussian_sigma=-1, nor
     ax.pcolormesh(X, Y, D, shading='gouraud', cmap=cmap, vmin=-vmax if (vsym == True) & (vmax is not None) else None, vmax=vmax)
     ax.set(xticks=[], yticks=[], frame_on=False)
 
-matched_pre_post = True
+matched_pre_post = False
+plot_hist = False
 os.environ["CUDA DEVICE ORDER"] = 'PCI_BUS_ID'
 os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 
@@ -82,22 +83,23 @@ df_plot['pred'] = predicted[:,0]
 df_plot['gt'] = DTCR.class_id
 df_plot['freq'] = DTCR.freq
 
-# plt.figure()
-# ax = sns.distplot(df_plot['pred'],1000,color='k',kde=False)
-# N,bins= np.histogram(df_plot['pred'],1000)
-# for p,b in zip(ax.patches,bins):
-#     if b < cut_bottom:
-#         p.set_facecolor('r')
-#     elif b > cut_top:
-#         p.set_facecolor('b')
-# y_min,y_max = plt.ylim()
-# plt.xlim([0,1])
-# plt.xticks(np.arange(0.0,1.1,0.1))
-# plt.yticks([])
-# plt.xlabel('')
-# plt.ylabel('')
-# plt.show()
-# plt.savefig('pred_hist.png',dpi=1200)
+if plot_hist:
+    plt.figure()
+    ax = sns.distplot(df_plot['pred'],1000,color='k',kde=False)
+    N,bins= np.histogram(df_plot['pred'],1000)
+    for p,b in zip(ax.patches,bins):
+        if b < cut_bottom:
+            p.set_facecolor('r')
+        elif b > cut_top:
+            p.set_facecolor('b')
+    y_min,y_max = plt.ylim()
+    plt.xlim([0,1])
+    plt.xticks(np.arange(0.0,1.1,0.1))
+    plt.yticks([])
+    plt.xlabel('')
+    plt.ylabel('')
+    plt.show()
+    plt.savefig('pred_hist.png',dpi=1200)
 
 beta_sequences = DTCR.beta_sequences
 v_beta = DTCR.v_beta
@@ -157,7 +159,8 @@ s['Response_cat'][s['y_test']==0] = 'sdpd'
 s.sort_values(by='preds',inplace=True)
 c_dict = dict(crpr='blue', sdpd='red')
 color_labels = [c_dict[_] for _ in s['Response_cat'].values]
-s.to_csv('order_samples_sel.csv',index=False)
+if matched_pre_post:
+    s.to_csv('order_samples_sel.csv',index=False)
 
 # s = pd.read_csv('CM038_BM2.csv')
 # s.rename(columns={'DeepTCR': 'preds'}, inplace=True)

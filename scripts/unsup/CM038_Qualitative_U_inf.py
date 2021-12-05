@@ -111,7 +111,7 @@ sample_id = DTCR.sample_id[sel_idx]
 file = 'cm038_x2_u_inf.pkl'
 featurize = False
 if featurize:
-    DTCR_U = DeepTCR_U('pre_vae', device=1)
+    DTCR_U = DeepTCR_U('pre_vae')
     features = DTCR_U.Sequence_Inference(beta_sequences=beta_sequences, v_beta=v_beta, d_beta=d_beta, j_beta=j_beta, hla=hla)
     with open('umap_obj.pkl', 'rb') as f:
         umap_obj = pickle.load(f)

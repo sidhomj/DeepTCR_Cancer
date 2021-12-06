@@ -1,17 +1,11 @@
 from DeepTCR.DeepTCR import DeepTCR_WF
 import numpy as np
 import pickle
-import os
-from sklearn.metrics import roc_auc_score,roc_curve
-import glob
 import pandas as pd
-import matplotlib.pyplot as plt
-import seaborn as sns
-from scipy.stats import gaussian_kde
-from scipy.stats import mannwhitneyu, wilcoxon
-from scipy.stats import spearmanr, pearsonr, fisher_exact
+from scipy.stats import fisher_exact
 from statsmodels.stats.multitest import multipletests
 
+enrichment_analysis = False
 df_sample = pd.read_csv('../../Data/other/Master_Beta.csv')
 df_sample.dropna(subset=['Pre_Sample','Post_Sample'],inplace=True)
 df_sample['ID'] = df_sample['ID'].astype(str)
@@ -85,10 +79,11 @@ counts_pre_dict = dict(zip(df_sum.index,df_sum['counts_pre']))
 counts_post_dict = dict(zip(df_sum.index,df_sum['counts_post']))
 df_merge['counts_pre_total'] = df_merge['sample'].map(counts_pre_dict)
 df_merge['counts_post_total'] = df_merge['sample'].map(counts_post_dict)
-# df_merge['OR'],df_merge['p_val'] = zip(*df_merge.apply(lambda x:
-#                                    fisher_exact([[x['counts_post'],x['counts_pre']],
-#                                                  [x['counts_post_total'],x['counts_pre_total']]]),
-#                                    axis=1))
-# _,df_merge['p_val_adj'],_,_ = multipletests(df_merge['p_val'],method='fdr_bh')
+if enrichment_analysis:
+    df_merge['OR'],df_merge['p_val'] = zip(*df_merge.apply(lambda x:
+                                       fisher_exact([[x['counts_post'],x['counts_pre']],
+                                                     [x['counts_post_total'],x['counts_pre_total']]]),
+                                       axis=1))
+    _,df_merge['p_val_adj'],_,_ = multipletests(df_merge['p_val'],method='fdr_bh')
 with open('df_dynamics.pkl','wb') as f:
     pickle.dump(df_merge,f,protocol=4)

@@ -77,27 +77,6 @@ df_merge['delta'] = df_merge['freq_post'] - df_merge['freq_pre']
 df_merge['abs_delta'] = np.abs(df_merge['delta'])
 df_merge['fc'] = df_merge['freq_post']/df_merge['freq_pre']
 df_merge['perc_change'] = (df_merge['freq_post']-df_merge['freq_pre'])/df_merge['freq_pre']
-df_merge = pd.merge(df_pre,df_post,how='outer',on='seq_id')
-df_merge['sample'] = df_merge['seq_id'].str.split('_',expand=True)[1]
-df_merge['freq_x'].fillna(value=0.0, inplace=True)
-df_merge['freq_y'].fillna(value=0.0, inplace=True)
-df_merge['counts_x'].fillna(value=0.0, inplace=True)
-df_merge['counts_y'].fillna(value=0.0, inplace=True)
-df_merge = df_merge[['sample','seq_id','gt_x','gt_y','pred_x','pred_y','freq_x', 'freq_y','counts_x','counts_y']]
-df_merge['gt_y'].fillna(df_merge['gt_x'],inplace=True)
-df_merge['gt_x'].fillna(df_merge['gt_y'],inplace=True)
-df_merge['pred_y'].fillna(df_merge['pred_x'],inplace=True)
-df_merge['pred_x'].fillna(df_merge['pred_y'],inplace=True)
-df_merge = df_merge[['sample','seq_id','gt_x','pred_x','freq_x','freq_y','counts_x','counts_y']]
-df_merge.rename(columns={'gt_x':'gt','pred_x':'pred',
-                         'freq_x':'freq_pre',
-                         'freq_y':'freq_post',
-                         'counts_x':'counts_pre',
-                         'counts_y':'counts_post'},inplace=True)
-df_merge['delta'] = df_merge['freq_post'] - df_merge['freq_pre']
-df_merge['abs_delta'] = np.abs(df_merge['delta'])
-df_merge['fc'] = df_merge['freq_post']/df_merge['freq_pre']
-df_merge['perc_change'] = (df_merge['freq_post']-df_merge['freq_pre'])/df_merge['freq_pre']
 df_merge['sample'].astype(int).astype(str)
 df_sum = df_merge.groupby(['sample']).agg({'counts_pre':'sum','counts_post':'sum','gt':'first'})
 df_sum['counts_pre'] = df_sum['counts_pre'].astype(int)

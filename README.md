@@ -1,3 +1,5 @@
 # Deep learning reveals predictive sequence concepts within immune repertoires to immunotherapy
 
 TCR-Seq (T-cell receptor sequencing) has been used extensively to characterize the immune response to cancer. However, most analyses of this data have been restricted to assessing quantitative measures such as clonality that do not leverage the information withDeepTCR_Cancerin the CDR3 sequence. We use DeepTCR, a previously described set of deep learning algorithms, to reveal sequence concepts that are predictive of the immune response to cancer in both murine and human data.
+
+Due to the sensitivity of the data (being clinical in nature), while we cannot make available the raw TCR-Seq data, we have made available all scripts used to do all the analyses described in the manuscript for the purpose of methodological transparency. They can be found under the scripts folder and are organized by the type of analysis. All required software that was used in this analysis can be found under requirements.txt

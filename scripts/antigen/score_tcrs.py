@@ -1,3 +1,9 @@
+"""
+Figure 4B,C
+"""
+"""
+This script takes the TCRs from the Oliveira dataset and runs them through the trained DeepTCR model to generate per sequence predictions.
+"""
 from DeepTCR.DeepTCR import DeepTCR_WF
 import pandas as pd
 import numpy as np

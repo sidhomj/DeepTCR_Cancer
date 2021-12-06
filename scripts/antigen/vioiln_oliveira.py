@@ -1,3 +1,10 @@
+"""
+Figure 4C
+"""
+
+"""
+This scripts provides the visualization for the distribution of predictions for the Oliveria TCR sequences, stratified by antigen cateogory.
+"""
 import pandas as pd
 import numpy as np
 import seaborn as sns

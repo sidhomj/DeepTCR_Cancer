@@ -1,3 +1,11 @@
+"""
+Figure 4D,E
+"""
+
+"""
+This scripts provides the visualization for the distribution of predictions for the McPas-TCR sequences, stratified by antigen cateogory. As well as creating the umaps showing where they lie in the unsupervised sequence space shown in Figure 2.
+
+"""
 import pandas as pd
 import numpy as np
 import seaborn as sns

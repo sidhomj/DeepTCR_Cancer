@@ -1,3 +1,11 @@
+"""
+Figure 4B
+"""
+
+"""
+This script creates the umaps showing the viral vs tumor specific TCRs and their corresponding P(response).
+"""
+
 import pandas as pd
 import numpy as np
 import seaborn as sns

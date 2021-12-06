@@ -1,3 +1,11 @@
+"""
+Figure 4A
+"""
+
+"""
+This script creates the residue sensitivity logos for the top predictive CRPR/SDPD sequences.
+"""
+
 import pandas as pd
 from DeepTCR.DeepTCR import DeepTCR_WF
 import pickle

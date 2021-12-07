@@ -1,3 +1,11 @@
+"""
+Figure 4G
+"""
+
+"""
+This script looks at the aggregate change in frequency of unique CDR3s over each sample as a function of P(response).
+"""
+
 import pickle
 import numpy as np
 import matplotlib.pyplot as plt

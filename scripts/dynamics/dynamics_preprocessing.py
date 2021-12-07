@@ -1,3 +1,6 @@
+"""
+This script creates a dataframe with all unique CDR3's in pre/post tx samples and their corresponding frequencies. Dataframe is used later by clone_dynamics.py and sample_dynamics.py
+"""
 from DeepTCR.DeepTCR import DeepTCR_WF
 import numpy as np
 import pickle

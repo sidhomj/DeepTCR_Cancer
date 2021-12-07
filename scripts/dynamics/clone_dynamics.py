@@ -1,3 +1,11 @@
+"""
+Figure 4F
+"""
+
+"""
+This script looks at the change in frequency of unique CDR3s as a function of P(response).
+"""
+
 import pickle
 import matplotlib.pyplot as plt
 import seaborn as sns

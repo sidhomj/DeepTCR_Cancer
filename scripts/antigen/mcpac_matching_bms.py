@@ -62,7 +62,6 @@ df_path = df_path.groupby(['CDR3.beta.aa']).agg({'Antigen.protein':'first','Epit
 # df_path['label'] = 'Viral'
 df_path['label'] = df_path['Pathology']
 df_path['label2'] = 'Viral'
-train_list.append(df_path)
 label_dict = {'Melan-A/MART-1':'MART-1',
               'Cytomegalovirus (CMV)':'CMV',
               'Influenza':'Flu',
@@ -70,6 +69,7 @@ label_dict = {'Melan-A/MART-1':'MART-1',
               'Yellow fever virus':'YF'}
 path_sel = list(map(label_dict.get,path_sel))
 df_path['label'] = df_path['label'].map(label_dict)
+train_list.append(df_path)
 
 df_train = pd.concat(train_list)
 df_train = Process_Seq(df_train,'CDR3.beta.aa')

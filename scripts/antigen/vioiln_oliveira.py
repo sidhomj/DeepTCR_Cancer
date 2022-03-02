@@ -48,7 +48,9 @@ df_antigen = pd.concat(train_list)
 df_merge = pd.merge(df_scores,df_antigen,on='TCR clonotype family')
 df_merge.drop_duplicates(subset=['TCR clonotype family','CDR3B_1'],inplace=True)
 df_merge['label'][df_merge['label']=='MLANA27-35'] = 'MART-1'
-pal = {'NeoAg':'r','MART-1':'r','EBV':'royalblue','Flu':'royalblue','YF':'royalblue'}
+color_tumor = 'darkorange'
+color_viral = 'grey'
+pal = {'NeoAg':color_tumor,'MART-1':color_tumor,'EBV':color_viral,'Flu':color_viral,'YF':color_viral}
 order = list(df_merge.groupby(['label']).mean()['pred'].sort_values().index)
 fig,ax = plt.subplots(figsize=(len(order)*1.25,5))
 sns.violinplot(data=df_merge,x='label',y='pred',

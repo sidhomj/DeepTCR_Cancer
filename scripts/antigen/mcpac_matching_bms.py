@@ -106,8 +106,10 @@ order_viral = list(df_merge[df_merge['label'].isin(path_sel)].groupby(['label'])
 order_maa = list(df_merge[df_merge['label'].isin(np.unique(list(cat_dict.values())))].groupby(['label']).mean().sort_values(by='pred').index)
 order_maa = [order_maa[0]]
 order = np.hstack([order_maa,order_viral])
-pal = {'MART-1':'r','CMV':'royalblue', 'Flu':'royalblue',
-       'EBV':'royalblue', 'YF':'royalblue'}
+color_tumor = 'darkorange'
+color_viral = 'grey'
+pal = {'MART-1':color_tumor,'CMV':color_viral, 'Flu':color_viral,
+       'EBV':color_viral, 'YF':color_viral}
 fig,ax = plt.subplots(figsize=(len(order)*1.25,5))
 sns.violinplot(data=df_merge,x='label',y='pred',cut=0,order=order,palette=pal,ax=ax)
 plt.ylabel('P(Response)',fontsize=24)

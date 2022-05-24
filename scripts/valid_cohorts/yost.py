@@ -36,13 +36,6 @@ df_merge = pd.merge(df_all,df_meta,on=['Patient','Tumor Type'],how='inner')
 df_merge['sample_id'] =  df_merge['Patient']+'_'+df_merge['Tumor Type'] + '_' + df_merge['time']
 df_merge = df_merge[df_merge['time']=='pre']
 
-#hla
-df_hla = pd.read_csv('../../Data/yost/hla_raw.csv')
-df_hla['Patient'] = df_hla['Sample'].str.split('_',expand=True)[0]
-df_hla.drop_duplicates(inplace=True,subset=['Patient','HLA.Allele'])
-df_hla = df_hla[['Patient','HLA.Allele']]
-df_hla = pd.pivot(df_hla,index='Patient',columns='HLA.Allele')
-
 sample_dict = dict(zip(df_merge['files'],df_merge['sample_id']))
 label_dict = dict(zip(df_merge['files'],df_merge['Response']))
 

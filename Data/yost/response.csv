@@ -1,0 +1,16 @@
+﻿Patient,Tumor Type,Treatment,Response
+su001,BCC,Pembrolizumab,Yes
+su002,BCC,Pembrolizumab,Yes
+su003,BCC,Pembrolizumab,Yes
+su004,BCC,Cemiplimab,Yes
+su005,BCC,Pembrolizumab,No
+su006,BCC,Pembrolizumab,No
+su007,BCC,Pembrolizumab,No
+su008,BCC,Pembrolizumab,No
+su009,BCC,Cemiplimab,Yes
+su010-S,SCC,Pembrolizumab,Yes
+su010,BCC,Pembrolizumab,No
+su011,SCC,Cemiplimab,Yes (CR)
+su012,BCC,Cemiplimab,Yes
+su013,SCC,Pembrolizumab,No
+su014,SCC,Cemiplimab,No

@@ -83,4 +83,3 @@ df_preds['time'] = df_preds['Samples'].str.split('_',expand=True)[0]
 df_preds = df_preds[df_preds['time']=='Pre']
 df_preds = df_preds[['Samples', 'Pred', 'label', 'response_bin']]
 df_preds.to_csv('sade_preds.csv',index=False)
-check=1

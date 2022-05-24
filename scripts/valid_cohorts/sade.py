@@ -1,3 +1,6 @@
+'''
+This script runs the pre-trained DeepTCR repertoire model to predict response on the sade dataset and saves the predictions to a file to be used later by plot_auc.py to visualize performance.
+'''
 from DeepTCR.DeepTCR import DeepTCR_WF
 import pandas as pd
 import numpy as np

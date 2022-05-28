@@ -1,4 +1,4 @@
-"""Figure 3A,B"""
+"""Figure 4A,B"""
 import numpy as np
 import pandas as pd
 import seaborn as sns

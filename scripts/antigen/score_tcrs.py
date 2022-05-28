@@ -1,5 +1,5 @@
 """
-Figure 4B,C
+Figure 5B,C
 """
 """
 This script takes the TCRs from the Oliveira dataset and runs them through the trained DeepTCR model to generate per sequence predictions.

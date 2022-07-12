@@ -8,7 +8,7 @@ TCR-Seq (T-cell receptor sequencing) has been used extensively to characterize t
 
 For description of analyses and their results contained in this repository, refer to the following manuscript:
 
-[Sidhom, J.W., Oliveria, G., Ross-MacDonald, R., Wu, C.J., Pardoll, D.M., & Baras, A.S. (2022). Deep learning reveals predictive sequence concepts within immune repertoires to immunotherapy.]()
+[Sidhom, J.W., Oliveria, G., Ross-MacDonald, R., Wind-Rotolo, M., Wu, C.J., Pardoll, D.M., & Baras, A.S. (2022). Deep learning reveals predictive sequence concepts within immune repertoires to immunotherapy.]()
 
 For full description of algorithm and methods behind DeepTCR, refer to the following manuscript:
 

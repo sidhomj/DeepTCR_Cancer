@@ -4,7 +4,7 @@ TCR-Seq (T-cell receptor sequencing) has been used extensively to characterize t
 
  All scripts used to do all the analyses described in the manuscript for the purpose of methodological transparency. They can be found under the scripts folder and are organized by the type of analysis. All required software that was used in this analysis can be found under requirements.txt.
  
-# Publication
+## Publication
 
 For description of analyses and their results contained in this repository, refer to the following manuscript:
 

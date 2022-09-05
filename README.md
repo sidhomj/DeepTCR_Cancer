@@ -10,6 +10,6 @@ For description of analyses and their results contained in this repository, refe
 
 [Sidhom, J.W., Oliveria, G., Ross-MacDonald, R., Wind-Rotolo, M., Wu, C.J., Pardoll, D.M., & Baras, A.S. (2022). Deep learning reveals predictive sequence concepts within immune repertoires to immunotherapy. Science Advances - in press]()
 
-For full description of algorithm and methods behind DeepTCR, refer to the following manuscript:
+For full description of algorithm and methods behind [DeepTCR](https://github.com/sidhomj/DeepTCR), refer to the following manuscript:
 
 [Sidhom, J.W., Larman, H.B., Pardoll, D.M., & Baras, A.S. (2021). DeepTCR is a deep learning framework for revealing sequence concepts within T-cell repertoires. Nat Commun 12, 1605](https://www.nature.com/articles/s41467-021-21879-w)
